@@ -1,0 +1,19 @@
+{{if .InputDataError}}
+<div>
+  <p>数据有误</p>
+</div>
+{{end}}
+{{if .AlreadyLogin}}
+<div>
+  <p>已经登陆</p>
+</div>
+{{else}}
+<form method="POST">
+  <fieldset>
+    <legend>登陆</legend>
+    <label>用户名</label><input type="text" name="user"/>
+    <label>密码</label><input type="password" name="password"/>
+    <button class="btn" type="submit">提交</button>
+  </fieldset>
+</form>
+{{end}}
