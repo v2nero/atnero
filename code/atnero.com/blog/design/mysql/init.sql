@@ -31,13 +31,13 @@ CREATE TABLE user_right_item (
         id bigint NOT NULL AUTO_INCREMENT UNIQUE
         ,name VARCHAR(40) UNIQUE
         ,dsc VARCHAR(500)
-        ,enable boolean
+        ,enable boolean NOT NULL
         ,CONSTRAINT pk_user_right_item PRIMARY KEY (
                 id
         )
 );
 
-INSERT INTO user_right_item(name, dsc) VALUES ('modify_db', 'right to modify database, limited to superuser');
+INSERT INTO user_right_item(name, dsc, enable) VALUES ('modify_db', 'right to modify database, limited to superuser', true);
 
 -- 权限集
 -- 如administrator

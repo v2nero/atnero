@@ -1,6 +1,7 @@
 package models
 
 type UserRightsManager interface {
+	Init()
 	GetRightItems() []string
 	GetRightSets() []string
 	HasRightItem(item string) bool

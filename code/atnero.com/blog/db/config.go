@@ -1,6 +1,7 @@
 package db
 
 import (
+	"atnero.com/blog/models"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
@@ -20,15 +21,17 @@ type DBConfig struct {
 }
 
 type DatabaseManager struct {
-	DbConfig       *DBConfig
-	DbVersion      string
-	bgMangerEnable bool
-	mutex          sync.Mutex
+	DbConfig         *DBConfig
+	DbVersion        string
+	bgMangerEnable   bool
+	UserRightManager models.UserRightsManager
+	mutex            sync.Mutex
 }
 
 func NewDatabaseManager(dbConfig *DBConfig) *DatabaseManager {
 	mng := &DatabaseManager{
-		DbConfig: dbConfig,
+		DbConfig:         dbConfig,
+		UserRightManager: new(DbUserRightsManager),
 	}
 	mng.init()
 	return mng
@@ -60,41 +63,44 @@ func (mgr *DatabaseManager) init() {
 	orm.RegisterModel(new(Articles))
 	orm.RegisterModel(new(ArticleAttachedLabels))
 	orm.RegisterModel(new(ArticleComments))
+
+	mgr.UserRightManager.Init()
 }
 
 func (mgr *DatabaseManager) GetBgManagerEnable() bool {
 	return mgr.bgMangerEnable
 }
 
-func (mgr *DatabaseManager) SetBgManagerEnable(enable bool) {
+func (mgr *DatabaseManager) SetBgManagerEnable(enable bool) error {
 	var err error
 	mgr.mutex.Lock()
 
-	var dbMng DbManager
-	o := orm.NewOrm()
-	qs := o.QueryTable("dbmanager")
-	err = qs.One(&dbMng)
-	if err != nil {
-		mgr.mutex.Unlock()
-		panic("no records in dbmanager")
-	}
-	dbMng.Enable = enable
-	num, err := o.Update(&dbMng)
-	if err != nil || num < 1 {
+	for {
+		var dbMng DbManager
+		o := orm.NewOrm()
+		qs := o.QueryTable("dbmanager")
+		err = qs.One(&dbMng)
 		if err != nil {
-			logs.Error("update dbmanager with error: %+v", err)
-		} else {
-			logs.Error("update dbmanager fail, update number is %d", num)
+			logs.Error("query table dbmanager return with error: %+v", err)
+			return err
 		}
-		mgr.mutex.Unlock()
-		panic("fail to update dbmanger table")
+		dbMng.Enable = enable
+		num, err := o.Update(&dbMng)
+		if err != nil || num < 1 {
+			if err != nil {
+				logs.Error("update dbmanager with error: %+v", err)
+			} else {
+				logs.Error("update dbmanager fail, update number is %d", num)
+			}
+			mgr.mutex.Unlock()
+			return fmt.Errorf("fail to update dbmanger table")
+		}
+		mgr.bgMangerEnable = enable
+		break
 	}
-	mgr.bgMangerEnable = enable
-	mgr.mutex.Unlock()
-}
 
-func (mgr *DatabaseManager) loadRights() {
-	//TODO:
+	mgr.mutex.Unlock()
+	return err
 }
 
 var dbMgr *DatabaseManager
@@ -109,7 +115,7 @@ func init() {
 	var err error
 	dbConfig.MaxIdleConns, err = beego.AppConfig.Int("mysqlmaxidleconns")
 	if err != nil {
-		dbConfig.MaxIdleConns = 100
+		dbConfig.MaxIdleConns = 10
 	}
 	dbConfig.MaxOpenConns, err = beego.AppConfig.Int("mysqlmaxopenconns")
 	if err != nil {

@@ -40,6 +40,99 @@ type DbUserRightsManager struct {
 	mutex   sync.Mutex
 }
 
+//Init 初始化
+//装数据库数据
+func (this *DbUserRightsManager) Init() {
+	this.itemMap = make(map[string]UserRightItem)
+	this.setMap = make(map[string]UserRightSet)
+	this.linkMap = make(map[rightSet2ItemPair]UserRightSet2itemMap)
+	this.loadRightItems()
+	this.loadRightSets()
+	this.loadRightSet2ItemMapping()
+}
+
+//仅供init使用
+func (this *DbUserRightsManager) loadRightItems() {
+	this.mutex.Lock()
+	defer this.mutex.Unlock()
+
+	var rightItems []*UserRightItem
+	o := orm.NewOrm()
+	qs := o.QueryTable("user_right_item")
+	_, err := qs.All(&rightItems)
+	if err != nil {
+		panic(err)
+	}
+	for _, i := range rightItems {
+		this.itemMap[i.Name] = *i
+	}
+}
+
+//仅供init使用
+func (this *DbUserRightsManager) loadRightSets() {
+	this.mutex.Lock()
+	defer this.mutex.Unlock()
+
+	var rightSets []*UserRightSet
+	o := orm.NewOrm()
+	qs := o.QueryTable("user_right_set")
+	_, err := qs.All(&rightSets)
+	if err != nil {
+		panic(err)
+	}
+	for _, i := range rightSets {
+		this.setMap[i.Name] = *i
+	}
+}
+
+func (this *DbUserRightsManager) checkRightItemExistanceWithIdWithoutLock(
+	itemId int64) bool {
+	for _, v := range this.itemMap {
+		if v.Id == itemId {
+			return true
+		}
+	}
+	return false
+}
+
+func (this *DbUserRightsManager) checkRightSetExistanceWithIdWithoutLock(
+	setId int64) bool {
+	for _, v := range this.setMap {
+		if v.Id == setId {
+			return true
+		}
+	}
+	return false
+}
+
+//仅供init使用
+func (this *DbUserRightsManager) loadRightSet2ItemMapping() {
+	this.mutex.Lock()
+	defer this.mutex.Unlock()
+	var mapNodes []*UserRightSet2itemMap
+	o := orm.NewOrm()
+	qs := o.QueryTable("user_right_set2item_map")
+	_, err := qs.All(&mapNodes)
+	if err != nil {
+		panic(err)
+	}
+	for _, i := range mapNodes {
+		itemExist := this.checkRightItemExistanceWithIdWithoutLock(i.ItemId)
+		setExist := this.checkRightSetExistanceWithIdWithoutLock(i.SetId)
+		if !itemExist || !setExist {
+			panic(fmt.Sprintf(
+				"RightItem %d (%v?do:not) exist or RightSet %d (%v?do:not) exist",
+				i.ItemId, itemExist,
+				i.SetId, setExist))
+		}
+		link := rightSet2ItemPair{
+			setId:  i.SetId,
+			itemId: i.ItemId,
+		}
+		this.linkMap[link] = *i
+	}
+}
+
 func (this *DbUserRightsManager) GetRightItems() []string {
 	var keys []string
 	this.mutex.Lock()
