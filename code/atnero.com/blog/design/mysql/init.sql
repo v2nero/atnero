@@ -9,22 +9,22 @@ CREATE DATABASE blog;
 USE blog;
 
 -- 表 dbversion
-CREATE TABLE db_version(
+CREATE TABLE version(
         id bigint NOT NULL AUTO_INCREMENT UNIQUE
         ,version CHAR(16)
-        ,CONSTRAINT pk_db_version PRIMARY KEY (id)
+        ,CONSTRAINT pk_version PRIMARY KEY (id)
 );
 
-INSERT INTO db_version(version) VALUES ('0.0.1');
+INSERT INTO version(version) VALUES ('0.0.1');
 
 -- 后台管理开关
-CREATE TABLE db_manager (
+CREATE TABLE bg_manager_enable (
         id bigint NOT NULL AUTO_INCREMENT UNIQUE
         ,enable boolean
-        ,CONSTRAINT pk_db_manager PRIMARY KEY (id)
+        ,CONSTRAINT pk_bg_manager_enable PRIMARY KEY (id)
 );
 
-INSERT INTO db_manager(enable) VALUES (true);
+INSERT INTO bg_manager_enable(enable) VALUES (true);
 
 -- 权限选项
 CREATE TABLE user_right_item (

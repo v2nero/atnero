@@ -1,11 +1,11 @@
 package db
 
-type DbVersion struct {
+type Version struct {
 	Id      int64 `orm:"auto"`
 	Version string
 }
 
-type DbManager struct {
+type BgManagerEnable struct {
 	Id     int64 `orm:"auto"`
 	Enable bool
 }
