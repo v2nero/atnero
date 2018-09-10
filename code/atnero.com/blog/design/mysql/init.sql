@@ -18,6 +18,7 @@ CREATE TABLE version(
 INSERT INTO version(version) VALUES ('0.0.1');
 
 -- 后台管理开关
+/*
 CREATE TABLE bg_manager_enable (
         id bigint NOT NULL AUTO_INCREMENT UNIQUE
         ,enable boolean
@@ -25,6 +26,7 @@ CREATE TABLE bg_manager_enable (
 );
 
 INSERT INTO bg_manager_enable(enable) VALUES (true);
+*/
 
 -- 权限选项
 CREATE TABLE user_right_item (

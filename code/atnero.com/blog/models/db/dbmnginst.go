@@ -6,7 +6,9 @@ import (
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
+	"math/rand"
 	"sync"
+	"time"
 )
 
 type DBConfig struct {
@@ -20,16 +22,62 @@ type DBConfig struct {
 }
 
 type DatabaseManager struct {
-	DbConfig    *DBConfig
-	DbVersion   string
-	bgMngEnable bool
-	mutex       sync.Mutex
+	DbConfig       *DBConfig
+	DbVersion      string
+	bgMngEnable    bool
+	bgMngEnablePwd string
+	mutex          sync.Mutex
 }
 
 func (mng *DatabaseManager) GetBgManagerEnable() bool {
 	return mng.bgMngEnable
 }
 
+// OpenBgManager 开启后台管理
+// 返回一个6位数的随机密码
+func (mng *DatabaseManager) EnableBgManager() string {
+	var retPwd string
+	mng.mutex.Lock()
+	for {
+		//using old password if enabled
+		if mng.bgMngEnable {
+			retPwd = mng.bgMngEnablePwd
+			break
+		}
+		//otherwise, generate new password
+		r := rand.New(rand.NewSource(time.Now().UnixNano()))
+		num := r.Int31n(1000000)
+		retPwd = fmt.Sprintf("%06d", num)
+		mng.bgMngEnable = true
+		break
+	}
+	mng.mutex.Unlock()
+	return retPwd
+}
+
+// VerifyBgManagerPwd 验证密码
+// 返回密码是否正确。只有一次验证机会。不管对与不对，bgMngEnable都会马上关闭
+func (mng *DatabaseManager) VerifyBgManagerPwd(pwd string) bool {
+	var ret bool
+	mng.mutex.Lock()
+	for {
+		if !mng.bgMngEnable {
+			ret = false
+			break
+		}
+		mng.bgMngEnable = false
+		if pwd != mng.bgMngEnablePwd {
+			ret = false
+			break
+		}
+		ret = true
+		break
+	}
+	mng.mutex.Unlock()
+	return ret
+}
+
+/*
 func (mng *DatabaseManager) SetBgManagerEnable(enable bool) error {
 	var err error
 	mng.mutex.Lock()
@@ -62,24 +110,29 @@ func (mng *DatabaseManager) SetBgManagerEnable(enable bool) error {
 	mng.mutex.Unlock()
 	return err
 }
+*/
 
 func (mng *DatabaseManager) initDbVersion() {
 	var version Version
 	o := orm.NewOrm()
-	if err := o.Read(&version); err != nil {
+	qs := o.QueryTable("version")
+	if err := qs.One(&version); err != nil {
 		panic(err)
 	}
 	mng.DbVersion = version.Version
 }
 
+/*
 func (mng *DatabaseManager) initDbMngEnable() {
 	var en BgManagerEnable
 	o := orm.NewOrm()
-	if err := o.Read(&en); err != nil {
+	qs := o.QueryTable("bg_manager_enable")
+	if err := qs.One(&en); err != nil {
 		panic(err)
 	}
 	mng.bgMngEnable = en.Enable
 }
+*/
 
 func (mng *DatabaseManager) init() {
 	orm.RegisterDriver("mysql", orm.DRMySQL)
@@ -96,7 +149,7 @@ func (mng *DatabaseManager) init() {
 		panic(err)
 	}
 	orm.RegisterModel(new(Version))
-	orm.RegisterModel(new(BgManagerEnable))
+	//orm.RegisterModel(new(BgManagerEnable))
 	orm.RegisterModel(new(UserRightItem))
 	orm.RegisterModel(new(UserRightSet))
 	orm.RegisterModel(new(UserRightSet2itemMap))
@@ -109,7 +162,7 @@ func (mng *DatabaseManager) init() {
 	orm.RegisterModel(new(ArticleComments))
 
 	mng.initDbVersion()
-	mng.initDbMngEnable()
+	//mng.initDbMngEnable()
 }
 
 func newDatabaseManager(dbConfig *DBConfig) *DatabaseManager {

@@ -5,7 +5,9 @@ type Version struct {
 	Version string
 }
 
+/*
 type BgManagerEnable struct {
 	Id     int64 `orm:"auto"`
 	Enable bool
 }
+*/

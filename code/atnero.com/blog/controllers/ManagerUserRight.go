@@ -1,7 +1,8 @@
 package controllers
 
 import (
-	//"github.com/astaxie/beego"
+	_ "atnero.com/blog/models"
+	"atnero.com/blog/models/db"
 )
 
 type ManagerUserRightController struct {
@@ -9,7 +10,11 @@ type ManagerUserRightController struct {
 }
 
 func (this *ManagerUserRightController) Get() {
+	if !db.DbMgrInst().GetBgManagerEnable() {
+		this.Abort("404")
+		return
+	}
 	this.InitLayout()
-	this.TplName = "manager/userright.html"
+	this.TplName = "manager/userrights.html"
 	this.Data["Title"] = "[后台管理]用户权限 @Nero"
 }
