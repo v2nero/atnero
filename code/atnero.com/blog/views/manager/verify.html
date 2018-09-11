@@ -1,0 +1,24 @@
+{{if .VerifyFail}}
+        <div>
+        <p>验证码不正确</p>
+        </div>
+{{else}}
+        {{if .InputDataError}}
+                <div>
+                <p>数据有误</p>
+                </div>
+        {{end}}
+        {{if .AlreadyVerified}}
+                <div>
+                <p>已经通过验证</p>
+                </div>
+        {{else}}
+                <form method="POST">
+                <fieldset>
+                <legend>请输入验证码</legend>
+                <label>验证码</label><input type="password" name="verifycode"/>
+                <button class="btn" type="submit">提交</button>
+                </fieldset>
+                </form>
+        {{end}}
+{{end}}
