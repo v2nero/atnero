@@ -6,15 +6,12 @@ import (
 	"atnero.com/blog/models/monitor"
 	_ "atnero.com/blog/routers"
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
+	_ "github.com/astaxie/beego/logs"
 )
 
 func main() {
-	//TODO: 写monitor客户端
-	if err := monitor.InitServer(); err != nil {
-		logs.Error(err)
-		return
-	}
+	//写用户权限管理
+	monitor.InitMonitorRpcService()
 	beego.AddTemplateExt("html")
 	beego.Run()
 }

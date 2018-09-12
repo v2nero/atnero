@@ -2,7 +2,8 @@ package controllers
 
 import (
 	_ "atnero.com/blog/models"
-	"atnero.com/blog/models/db"
+	_ "atnero.com/blog/models/db"
+	blogSess "atnero.com/blog/models/session"
 )
 
 type ManagerUserRightController struct {
@@ -10,7 +11,7 @@ type ManagerUserRightController struct {
 }
 
 func (this *ManagerUserRightController) Get() {
-	if !db.DbMgrInst().GetBgManagerEnable() {
+	if !blogSess.BgManagerEnabled(&this.Controller) {
 		this.Abort("404")
 		return
 	}

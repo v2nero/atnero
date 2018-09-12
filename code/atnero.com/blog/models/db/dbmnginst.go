@@ -49,6 +49,7 @@ func (mng *DatabaseManager) EnableBgManager() string {
 		num := r.Int31n(1000000)
 		retPwd = fmt.Sprintf("%06d", num)
 		mng.bgMngEnable = true
+		mng.bgMngEnablePwd = retPwd
 		break
 	}
 	mng.mutex.Unlock()

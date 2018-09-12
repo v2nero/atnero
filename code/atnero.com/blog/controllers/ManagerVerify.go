@@ -10,16 +10,16 @@ type ManagerVerifyController struct {
 }
 
 func (this *ManagerVerifyController) Get() {
-	if !db.DbMgrInst().GetBgManagerEnable() {
-		this.Abort("404")
-		return
-	}
-
 	this.InitLayout()
 	this.TplName = "manager/verify.html"
 	this.Data["Title"] = "[后台管理]验证"
 	if blogSess.BgManagerEnabled(&this.Controller) {
 		this.Data["AlreadyVerified"] = true
+		return
+	}
+
+	if !db.DbMgrInst().GetBgManagerEnable() {
+		this.Abort("404")
 		return
 	}
 }
