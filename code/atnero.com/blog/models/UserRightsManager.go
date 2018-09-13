@@ -11,8 +11,12 @@ type UserRightsManagerIf interface {
 	HasRightItem(item string) bool
 	HasRightSet(set string) bool
 	RightSetHasRightItem(set string, item string) bool
-	AddRightItem(item string, dsc string) error
+	AddRightItem(item string, enabled bool, dsc string) error
+	EnableRightItem(item string, enable bool) error
+	RightItemEnabled(item string) (bool, error)
+	GetRightItemDiscription(item string) (string, bool)
 	AddRightSet(set string, dsc string) error
+	GetRightSetDiscription(set string) (string, bool)
 	AddRightItem2RightSet(set string, item string) error
 }
 

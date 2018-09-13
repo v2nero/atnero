@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
+	"sort"
 	"sync"
 )
 
@@ -140,6 +141,7 @@ func (this *DbUserRightsManager) GetRightItems() []string {
 		keys = append(keys, k)
 	}
 	this.mutex.Unlock()
+	sort.Strings(keys)
 	return keys
 }
 
@@ -150,6 +152,7 @@ func (this *DbUserRightsManager) GetRightSets() []string {
 		keys = append(keys, k)
 	}
 	this.mutex.Unlock()
+	sort.Strings(keys)
 	return keys
 }
 
@@ -221,11 +224,11 @@ func (this *DbUserRightsManager) RightSetHasRightItem(
 
 //非线程安全
 func (this *DbUserRightsManager) ormAddRightItem(
-	name string, dsc string) (int64, error) {
+	name string, enabled bool, dsc string) (int64, error) {
 	var item UserRightItem
 	item.Name = name
 	item.Discription = dsc
-	item.Enable = false
+	item.Enable = enabled
 
 	o := orm.NewOrm()
 	id, err := o.Insert(&item)
@@ -237,6 +240,7 @@ func (this *DbUserRightsManager) ormAddRightItem(
 
 func (this *DbUserRightsManager) AddRightItem(
 	item string,
+	enabled bool,
 	dsc string) error {
 	var errRet error
 	this.mutex.Lock()
@@ -246,12 +250,12 @@ func (this *DbUserRightsManager) AddRightItem(
 			errRet = fmt.Errorf("Right item [%s] already exists", item)
 			break
 		}
-		id, err := this.ormAddRightItem(item, dsc)
+		id, err := this.ormAddRightItem(item, enabled, dsc)
 		if err != nil {
 			break
 		}
 		rightItem := UserRightItem{
-			id, item, false, dsc,
+			id, item, enabled, dsc,
 		}
 		this.itemMap[item] = rightItem
 		break
@@ -283,10 +287,31 @@ func (this *DbUserRightsManager) EnableRightItem(
 		}
 		r.Enable = enable
 		errRet = this.ormUpdateRightItemRecord(&r)
+		if errRet == nil {
+			this.itemMap[item] = r
+		}
 		break
 	}
 	this.mutex.Unlock()
 	return errRet
+}
+
+func (this *DbUserRightsManager) RightItemEnabled(
+	item string) (bool, error) {
+	var errRet error
+	enabled := false
+	this.mutex.Lock()
+	for {
+		r, exist := this.itemMap[item]
+		if !exist {
+			errRet = fmt.Errorf("item %v not exist", item)
+			break
+		}
+		enabled = r.Enable
+		break
+	}
+	this.mutex.Unlock()
+	return enabled, errRet
 }
 
 //非线程安全

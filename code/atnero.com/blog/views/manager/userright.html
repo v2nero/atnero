@@ -1,0 +1,113 @@
+
+
+<table class="table table-striped">
+	<caption>条纹表格布局</caption>
+	<thead>
+		<tr>
+			<th>名字</th>
+			<th>描述</th>
+			<th>开关</th>
+		</tr>
+	</thead>
+	<tbody id="tableRightItems">
+		{{range .RightItems}}
+			<tr>
+				<td name="name">{{.Name}}</td>
+				<td name="dsc">{{.Dsc}}</td>
+				<td name="enabled">
+					{{if .Enabled}}
+						<button class="btn btn-success" name="BtnEnable">开</button>
+					{{else}}
+						<button class="btn btn-danger" name="BtnEnable">关</button>
+					{{end}}
+				</td>
+			</tr>
+		{{end}}
+	</tbody>
+</table>
+
+<form id="myForm">
+	<div class="form-group">
+		<label for="name">名称</label>
+		<input type="text" class="form-control" name="name">
+	</div>
+	<div class="form-group">
+		<label for="enabled">开启</label>
+		<input type="checkbox" class="form-control" name="enabled">
+	</div>
+	<div class="form-group">
+		<label for="dsc">描述</label>
+		<input type="text" class="form-control" name="dsc">
+	</div>
+	<div class="modal-footer">
+	　<button type="button" class="btn btn-primary" id="BtnCreate">创建</button>　
+	</div>
+</form> 
+
+<script type="text/javascript">
+
+function RightItemEnableCb() {
+	localThis = $(this)
+	$.post("/manager/api_rightitem",
+	{
+		cmd: "enable",
+		name: $(this).parent().parent().children("td[name='name']").text(),
+		enabled: $(this).text() == "开" ? "false":"true",
+	}, function(data, status) {
+		if (data == "success") {
+			//成功则修改页面
+			if (localThis.text() == "开") {
+				localThis.text("关")
+				localThis.attr("class", "btn btn-danger")
+			} else {
+				localThis.text("开")
+				localThis.attr("class", "btn btn-success")
+			}
+			
+		} else {
+			//失败,显示出错
+			alert("失败")
+		}
+	});
+}
+
+$("button[name='BtnEnable']").click(RightItemEnableCb);
+
+function CreateRightItemCb(){
+	$.post("/manager/api_rightitem",
+	{
+		cmd: "create",
+		name: $("input[name='name']").prop("value"),
+		enabled: $("input[name='enabled'").prop("checked") ? "true":"false",
+		dsc: $("input[name='dsc']").prop("value"),
+	}, function(data, status) {
+		if (data == "success") {
+			//alert("成功")
+			newRow = "<tr> <td name=\"name\">"+
+					$("input[name='name']").prop("value") +
+				"</td> <td name=\"dsc\">"+
+					$("input[name='dsc']").prop("value") +
+				"</td> <td name=\"enabled\">";
+			if ($("input[name='enabled'").prop("checked")) {
+				newRow += "<button class=\"btn btn-success\" name=\"BtnEnable\">开</button>";
+			} else {
+				newRow += "<button class=\"btn btn-danger\" name=\"BtnEnable\">关</button>";
+			}
+			newRow += "</td></tr>";
+			
+			tbodyHtml = $("#tableRightItems").html()
+			tbodyHtml += newRow
+			$("#tableRightItems").html(tbodyHtml)
+			//重新设置回调函数
+			$("button[name='BtnEnable']").click(RightItemEnableCb);
+		} else {
+			//失败,显示出错
+			alert("失败")
+		}
+	});
+}
+
+$("#BtnCreate").click(CreateRightItemCb);
+
+
+</script>

@@ -8,12 +8,19 @@
   <p>已经登陆</p>
 </div>
 {{else}}
+
+<h1>登陆</h1>
+<hr>
+
 <form method="POST">
-  <fieldset>
-    <legend>登陆</legend>
-    <label>用户名</label><input type="text" name="user"/>
-    <label>密码</label><input type="password" name="password"/>
-    <button class="btn" type="submit">提交</button>
-  </fieldset>
+    <div class="form-group">
+    <label>用户名</label><input type="text" class="form-control" name="user"/>
+    </div>
+    <div class="form-group">
+    <label>密码</label><input type="password" class="form-control" name="password"/>
+    </div>
+    <div class="modal-footer">
+    <button class="btn" class="btn btn-primary" type="submit">提交</button>
+    </div>
 </form>
 {{end}}
