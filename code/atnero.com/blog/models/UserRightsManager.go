@@ -18,6 +18,8 @@ type UserRightsManagerIf interface {
 	AddRightSet(set string, dsc string) error
 	GetRightSetDiscription(set string) (string, bool)
 	AddRightItem2RightSet(set string, item string) error
+	DelRightItemFromRightSet(set string, item string) error
+	GetRightSetRightItems(set string) []string
 }
 
 var userRightsManagerInst UserRightsManagerIf

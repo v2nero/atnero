@@ -1,0 +1,85 @@
+<h1>用户权限集管理</h1>
+<div class="table-responsive">
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>名字</th>
+			<th>描述</th>
+			<th>权限列表</th>
+			<th>修改</th>
+			<th>删除</th>
+		</tr>
+	</thead>
+	<tbody id="tableRightSets">
+		{{range .RightSets}}
+			<tr>
+				<td name="name">{{.Name}}</td>
+				<td name="dsc">{{.Dsc}}</td>
+				<td name="rightItemList">
+					{{range .RightItems}}
+						<p name="rightItemName">{{.}}</p>
+					{{end}}
+				</td>
+				<td><button name="modify">修改</button></td>
+				<td><button name="del">删除</button></td>
+			</tr>
+		{{end}}
+	</tbody>
+</table>
+</div>
+
+<div id="myForm">
+	<div class="form-group">
+		<label for="name">名称</label>
+		<input type="text" class="form-control" name="name">
+	</div>
+	<div class="form-group">
+		<label for="dsc">描述</label>
+		<input type="text" class="form-control" name="dsc">
+	</div>
+	<div class="form-group" id="createResult"> </div>
+	<div class="modal-footer">
+	　<button type="button" class="btn btn-primary" id="myFormBtnCreate">创建</button>　
+	</div>
+	
+</div>
+
+<script type="text/javascript">
+
+function GoToModifyBg() {
+	self.location = "/manager/userrightset_modify/"+$(this).parent().parent().children("td[name='name']").text();
+}
+$("button[name='modify']").click(GoToModifyBg);
+
+
+function CreateRightSetCb(){
+	$.post("/manager/api_rightset",
+	{
+		cmd: "create",
+		name: $("input[name='name']").prop("value"),
+		dsc: $("input[name='dsc']").prop("value"),
+	}, function(data, status) {
+		if (data == "success") {
+			newRow = "<tr> <td name=\"name\">"+
+					$("input[name='name']").prop("value") +
+				"</td> <td name=\"dsc\">"+
+					$("input[name='dsc']").prop("value") +
+				"</td><td name=\"rightItemList\"></td>";
+			newRow += "</td><td><button name=\"modify\">修改</button></td><td><button name=\"del\">删除</button></td></tr>";
+			
+			tbodyHtml = $("#tableRightSets").html()
+			tbodyHtml += newRow
+			$("#tableRightSets").html(tbodyHtml)
+			//重新设置回调函数
+			$("button[name='modify']").click(GoToModifyBg);
+			$("#createResult").html("<p class='text-success'>创建成功</p>")
+		} else {
+			$("#createResult").html("<p class='text-danger'>创建失败</p>")
+		}
+	});
+}
+
+$("#myFormBtnCreate").click(CreateRightSetCb);
+
+
+</script>

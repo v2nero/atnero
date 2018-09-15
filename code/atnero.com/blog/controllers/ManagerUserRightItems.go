@@ -6,7 +6,7 @@ import (
 	blogSess "atnero.com/blog/models/session"
 )
 
-type ManagerUserRightController struct {
+type ManagerUserRightItemsController struct {
 	CommonPageContainerController
 }
 
@@ -16,7 +16,7 @@ type userRightItemExpose struct {
 	Dsc     string
 }
 
-func (this *ManagerUserRightController) Get() {
+func (this *ManagerUserRightItemsController) Get() {
 	if !models.TestManagerInst().BgManagerTestEnabled(&this.Controller) {
 		if !blogSess.BgManagerEnabled(&this.Controller) {
 			this.Abort("404")
@@ -24,7 +24,7 @@ func (this *ManagerUserRightController) Get() {
 		}
 	}
 	this.InitLayout()
-	this.TplName = "manager/userright.html"
+	this.TplName = "manager/userrightitems.html"
 	this.Data["Title"] = "[后台管理]用户权限 @Nero"
 
 	//权限项

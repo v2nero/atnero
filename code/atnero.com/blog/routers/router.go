@@ -7,8 +7,11 @@ import (
 
 func init() {
 	beego.Router("/", &controllers.MainController{})
-	beego.Router("/manager/userright", &controllers.ManagerUserRightController{})
+	beego.Router("/manager/userrightitems", &controllers.ManagerUserRightItemsController{})
+	beego.Router("/manager/userrightsets", &controllers.ManagerUserRightSetsController{})
+	beego.Router("/manager/userrightset_modify/:setname", &controllers.ManagerUserRightSetModifyController{})
 	beego.Router("/manager/api_rightitem", &controllers.ApiRightItemController{})
+	beego.Router("/manager/api_rightset", &controllers.ApiRightSetController{})
 	beego.Router("/manager/verify", &controllers.ManagerVerifyController{})
 	beego.Router("/login", &controllers.LoginController{})
 }

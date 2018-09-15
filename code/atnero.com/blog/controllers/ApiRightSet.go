@@ -7,7 +7,7 @@ import (
 	//"strconv"
 )
 
-type ApiRightItemController struct {
+type ApiRightSetController struct {
 	beego.Controller
 }
 
@@ -21,9 +21,13 @@ type formRightItemUpdateInfo struct {
 }
 */
 
-func (this *ApiRightItemController) handleEnable() bool {
+func (this *ApiRightSetController) handleEnable() bool {
 	strName := this.GetString("name")
 	if len(strName) == 0 {
+		return false
+	}
+	strItemName := this.GetString("rightitemname")
+	if len(strItemName) == 0 {
 		return false
 	}
 	bEnabled := false
@@ -35,36 +39,32 @@ func (this *ApiRightItemController) handleEnable() bool {
 	} else {
 		return false
 	}
-	err := models.UserRightsMngInst().EnableRightItem(strName, bEnabled)
+	var err error
+	if bEnabled {
+		err = models.UserRightsMngInst().AddRightItem2RightSet(strName, strItemName)
+	} else {
+		err = models.UserRightsMngInst().DelRightItemFromRightSet(strName, strItemName)
+	}
 	if err != nil {
 		return false
 	}
 	return true
 }
 
-func (this *ApiRightItemController) handleCreate() bool {
+func (this *ApiRightSetController) handleCreate() bool {
 	strName := this.GetString("name")
 	if len(strName) == 0 {
-		return false
-	}
-	bEnabled := false
-	strEnabled := this.GetString("enabled")
-	if strEnabled == "true" {
-		bEnabled = true
-	} else if strEnabled == "false" {
-		bEnabled = false
-	} else {
 		return false
 	}
 	strDsc := this.GetString("dsc")
-	err := models.UserRightsMngInst().AddRightItem(strName, bEnabled, strDsc)
+	err := models.UserRightsMngInst().AddRightSet(strName, strDsc)
 	if err != nil {
 		return false
 	}
 	return true
 }
 
-func (this *ApiRightItemController) Post() {
+func (this *ApiRightSetController) Post() {
 	if !models.TestManagerInst().BgManagerTestEnabled(&this.Controller) {
 		if !blogSess.BgManagerEnabled(&this.Controller) {
 			this.Abort("404")
@@ -79,8 +79,6 @@ func (this *ApiRightItemController) Post() {
 	case "enable":
 		result = this.handleEnable()
 		break
-	case "modify":
-		break
 	case "create":
 		result = this.handleCreate()
 		break
@@ -91,5 +89,5 @@ func (this *ApiRightItemController) Post() {
 	} else {
 		this.Data["result"] = "fail"
 	}
-	this.TplName = "manager/ApiRightItem.html"
+	this.TplName = "manager/ApiRightSet.html"
 }

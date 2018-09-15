@@ -1,0 +1,111 @@
+<h1>用户权限集修改</h1>
+<div class="modal-footer">
+	<a href="javascript:" class="btn btn-primary" onclick="self.location=document.referrer;">返回上页</a>
+</div>
+{{if .HasSuchSet}}
+<div id="myForm">
+	<div class="form-group">
+		<label for="name">名称</label>
+		<input type="text" class="form-control" name="name" readonly="true" id="rightSetName" value="{{.Name}}">
+	</div>
+	<div class="form-group">
+		<label for="dsc">描述</label>
+		<input type="text" class="form-control" name="dsc" readonly="true" value="{{.Dsc}}">
+	</div>
+	<div class="form-group">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>名字</th>
+				<th>描述</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody id="tableRightItems">
+			{{range .RightItems}}
+				<tr>
+					<td name="name">{{.Name}}</td>
+					<td name="dsc">{{.Dsc}}</td>
+					<td>
+						{{if .Enabled}}
+						<button name="rightItemEnableBtn" class="btn btn-success">已开启</button>
+						{{else}}
+						<button name="rightItemEnableBtn" class="btn btn-danger">未开启</button>
+						{{end}}
+					</td>
+				</tr>
+			{{end}}
+		</tbody>
+	</table>
+	</div>
+</div>
+
+<script type="text/javascript">
+function RightItemEnableCb() {
+	localThis = $(this)
+	//alert($(this).attr("class"))
+	/*
+	$.post("/manager/api_rightset",
+	{
+		cmd: "enable",
+		name: $("#rightSetName").prop("value"),
+		rightitemname: $(this).parent().parent().children("td[name='name']").text(),
+		enabled: $(this).attr("class") == "btn btn-success" ? "false":"true",
+	}, function(data, status) {
+		//alert(data)
+		if (data == "success") {
+			//成功则修改页面
+			//alert(localThis.attr("class"))
+			if (localThis.attr("class") == "btn btn-success") {
+				localThis.text("未开启")
+				localThis.attr("class", "btn btn-danger")
+			} else {
+				localThis.text("已开启")
+				localThis.attr("class", "btn btn-success")
+			}
+			
+		} else {
+			//失败,显示出错
+			alert("失败")
+		}
+	}, "text").fail(function() {
+		alert("fail")
+	});
+	*/
+	$.ajax({
+		method:"POST",
+		url:"/manager/api_rightset",
+		data: {
+			cmd: "enable",
+			name: $("#rightSetName").prop("value"),
+			rightitemname: $(this).parent().parent().children("td[name='name']").text(),
+			enabled: $(this).attr("class") == "btn btn-success" ? "false":"true",
+		},
+		success: function(data, status) {
+			//alert(data)
+			if (data == "success") {
+				//成功则修改页面
+				//alert(localThis.attr("class"))
+				if (localThis.attr("class") == "btn btn-success") {
+					localThis.text("未开启")
+					localThis.attr("class", "btn btn-danger")
+				} else {
+					localThis.text("已开启")
+					localThis.attr("class", "btn btn-success")
+				}
+				
+			} else {
+				//失败,显示出错
+				alert("失败")
+			}
+		},
+		dataType: "text",
+	});
+}
+
+$("button[name='rightItemEnableBtn']").click(RightItemEnableCb);
+</script>
+{{else}}
+没有此权限集
+{{end}}
+

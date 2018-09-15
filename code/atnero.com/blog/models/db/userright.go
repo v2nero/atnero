@@ -164,6 +164,34 @@ func (this *DbUserRightsManager) HasRightItem(item string) bool {
 	return b
 }
 
+func (this *DbUserRightsManager) GetRightSetRightItems(set string) []string {
+	var items []string
+	//FIXME: 这里性能非常糟糕
+	this.mutex.Lock()
+	for {
+		setData, bExist := this.setMap[set]
+		if !bExist {
+			break
+		}
+		setId := setData.Id
+		for k, v := range this.linkMap {
+			if k.setId == setId {
+				for _, ii := range this.itemMap {
+					if ii.Id == v.ItemId {
+						items = append(items, ii.Name)
+						break
+					}
+				}
+
+			}
+		}
+		break
+	}
+	this.mutex.Unlock()
+	sort.Strings(items)
+	return items
+}
+
 func (this *DbUserRightsManager) GetRightItemDiscription(
 	item string) (string, bool) {
 	var b bool
@@ -371,6 +399,22 @@ func (this *DbUserRightsManager) ormAddRightItem2RightSet(
 	return id, err
 }
 
+//非线程安全
+func (this *DbUserRightsManager) ormDelRightItem2RightSet(
+	linkId int64) error {
+
+	mapNode := UserRightSet2itemMap{
+		Id: linkId,
+	}
+
+	o := orm.NewOrm()
+	_, err := o.Delete(&mapNode)
+	if err != nil {
+		logs.Error("[ORM]insert Set2ItemMap node fail with error:%+v", err)
+	}
+	return err
+}
+
 func (this *DbUserRightsManager) AddRightItem2RightSet(
 	set string, item string) error {
 	var errRet error
@@ -402,6 +446,38 @@ func (this *DbUserRightsManager) AddRightItem2RightSet(
 			SetId:  setItem.Id,
 		}
 		this.linkMap[linkItem] = mapNode
+		break
+	}
+	this.mutex.Unlock()
+	return errRet
+}
+
+func (this *DbUserRightsManager) DelRightItemFromRightSet(
+	set string, item string) error {
+	var errRet error
+	this.mutex.Lock()
+	for {
+		setItem, setExist := this.setMap[set]
+		itemItem, itemExist := this.itemMap[item]
+		if !setExist || !itemExist {
+			errRet = fmt.Errorf("set or item not exist(%v, %v)", setExist, itemExist)
+			break
+		}
+		linkItem := rightSet2ItemPair{
+			setId:  setItem.Id,
+			itemId: itemItem.Id,
+		}
+		linkNode, linkExist := this.linkMap[linkItem]
+		if !linkExist {
+			errRet = fmt.Errorf("mapping not exist")
+			break
+		}
+		err := this.ormDelRightItem2RightSet(linkNode.Id)
+		if err != nil {
+			errRet = err
+			break
+		}
+		delete(this.linkMap, linkItem)
 		break
 	}
 	this.mutex.Unlock()
