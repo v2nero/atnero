@@ -65,9 +65,11 @@ func handleCreate(this *ApiRightItemController) bool {
 }
 
 func (this *ApiRightItemController) Post() {
-	if !blogSess.BgManagerEnabled(&this.Controller) {
-		this.Abort("404")
-		return
+	if !models.TestManagerInst().BgManagerTestEnabled(&this.Controller) {
+		if !blogSess.BgManagerEnabled(&this.Controller) {
+			this.Abort("404")
+			return
+		}
 	}
 
 	result := false
