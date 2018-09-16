@@ -20,6 +20,7 @@ type UserRightsManagerIf interface {
 	AddRightItem2RightSet(set string, item string) error
 	DelRightItemFromRightSet(set string, item string) error
 	GetRightSetRightItems(set string) []string
+	GetDefaultRightSetsList() []*db.DefaultRightSetMapNode
 	AddDefaultRightSet(name string, dsc string, rightSetName string) error
 	UpdateDefaultRightSet(name string, dsc string, rightSetName string) error
 }

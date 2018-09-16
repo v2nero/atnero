@@ -1,0 +1,171 @@
+<h1>默认权限配置</h1>
+<div class="table-responsive">
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>名字</th>
+			<th>描述</th>
+			<th>映射权限集</th>
+			<th>操作结果</th>
+		</tr>
+	</thead>
+	<tbody id="tableDefaultRightSets">
+			<!--tr>
+				<td name="name">{{.Name}}</td>
+				<td name="dsc">{{.Dsc}}</td>
+				<td name="rightset">
+					<select name="rightSets" id="myFormSelectRightSets">
+					<option value="volvo">Volvo</option>
+					<option value="saab">Saab</option>
+					<option value="fiat" selected>Fiat</option>
+					<option value="audi">Audi</option>
+					</select>
+				</td>
+				<td name="result">结果</td>
+			</tr-->
+	</tbody>
+</table>
+</div>
+
+<div>
+	<hr/>
+<h3>创建</h3>
+</div>
+
+<div id="myForm">
+	<div class="form-group">
+		<label for="name">名称</label>
+		<input type="text" class="form-control" name="name">
+	</div>
+	<div class="form-group">
+		<label for="dsc">描述</label>
+		<input type="text" class="form-control" name="dsc">
+	</div>
+	<div>
+		<label for="">映射权限集</label>
+		<select name="myFormRightSets" id="myFormSelectRightSets">
+		</select>
+	</div>
+	<div class="form-group" id="createResult"> </div>
+	<div class="modal-footer">
+	　<button type="button" class="btn btn-primary" id="myFormBtnCreate">创建</button>　
+	</div>
+	
+</div>
+
+<script type="text/javascript">
+
+var myDefaultRightSets = new Array()
+
+function InitMyDefaultRightSets() {
+{{range $i, $v := .DefaultRightSets}}
+	myDefaultRightSets[{{$i}}] = {
+		Name: "{{$v.Name}}",
+		Dsc: "{{$v.Dsc}}",
+		RightSetName: "{{$v.RightSetName}}",
+	}
+{{end}}
+}
+
+var myTotalRightSets = new Array()
+
+function InitTotalRightSets() {
+{{range $i, $v := .TotalRightSets}}
+	myTotalRightSets[{{$i}}] = "{{$v}}"
+{{end}}
+}
+
+
+function InitMyFormSelectRightSets() {
+	for (i in myTotalRightSets) {
+		$("#myFormSelectRightSets").append("<option value=\""+myTotalRightSets[i]+"\">"+myTotalRightSets[i]+"</option>")
+	}
+}
+
+function GetRightSetsSelectHtml(name, selectname) {
+	var selectHtml = "<select name=\""+name+"\">"
+	for (i in myTotalRightSets) {
+		if (myTotalRightSets[i] == selectname) {
+			selectHtml += "<option value=\""+myTotalRightSets[i]+"\" selected=\"selected\" >"+myTotalRightSets[i]+"</option>";
+		} else {
+			selectHtml += "<option value=\""+myTotalRightSets[i]+"\">"+myTotalRightSets[i]+"</option>";
+		}
+	}
+	selectHtml += "</select>"
+	return selectHtml
+}
+
+function UpdateDefaultRightSetCb() {
+	localThis = $(this)
+	localName = $(this).parent().parent().children("td[name='name']").text()
+	$.post("/manager/default_rightset",
+	{
+		cmd: "update",
+		name: $(this).parent().parent().children("td[name='name']").text(),
+		dsc: $(this).parent().parent().children("td[name='dsc']").text(),
+		setname: $(this).prop("value")
+	}, function(data, status) {
+		if (data == "success") {
+			localThis.parent().parent().children("td[name='result']").html("<p class='text-success'>修改成功</p>")
+		} else {
+			UpdateMyDefaultRightSetsTable()
+			tdResult = $("td[name='name']").first()
+			while (tdResult != null) {
+				if (tdResult.html() == localName) {
+					tdResult.parent().children("td[name='result']").html("<p class='text-danger'>修改失败</p>")
+					break
+				}
+			}
+		}
+	});
+}
+
+function UpdateMyDefaultRightSetsTable() {
+	//var selectHtml = GetRightSetsSelectHtml("myDefaultTableRightSetSelect")
+	var tbodyHtml = ""
+	for (i in myDefaultRightSets) {
+		tbodyHtml += "<tr> \
+				<td name=\"name\">"+myDefaultRightSets[i].Name+"</td>\
+				<td name=\"dsc\">"+myDefaultRightSets[i].Dsc+"</td> \
+				<td name=\"rightset\">";
+		tbodyHtml += GetRightSetsSelectHtml("myDefaultTableRightSetSelect", myDefaultRightSets[i].RightSetName);
+		tbodyHtml += "</td> \
+				<td name=\"result\"></td> \
+				</tr>"
+	}
+	$("#tableDefaultRightSets").html(tbodyHtml)
+	$("select[name='myDefaultTableRightSetSelect']").change(UpdateDefaultRightSetCb)
+}
+
+
+function CreateRightSetCb(){
+	$.post("/manager/default_rightset",
+	{
+		cmd: "create",
+		name: $("input[name='name']").prop("value"),
+		dsc: $("input[name='dsc']").prop("value"),
+		setname: $("#myFormSelectRightSets").prop("value")
+	}, function(data, status) {
+		if (data == "success") {
+			myDefaultRightSets[myDefaultRightSets.length] = {
+				Name: $("input[name='name']").prop("value"),
+				Dsc: $("input[name='dsc']").prop("value"),
+				RightSetName: $("#myFormSelectRightSets").prop("value"),
+			};
+			UpdateMyDefaultRightSetsTable()
+			$("#createResult").html("<p class='text-success'>创建成功</p>")
+		} else {
+			$("#createResult").html("<p class='text-danger'>创建失败</p>")
+		}
+	});
+}
+
+
+InitMyDefaultRightSets()
+InitTotalRightSets()
+InitMyFormSelectRightSets()
+UpdateMyDefaultRightSetsTable()
+$("#myFormBtnCreate").click(CreateRightSetCb);
+
+
+</script>

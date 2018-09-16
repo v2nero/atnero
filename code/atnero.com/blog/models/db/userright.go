@@ -43,6 +43,7 @@ type rightSet2ItemPair struct {
 
 type DefaultRightSetMapNode struct {
 	Name         string
+	Dsc          string
 	RightSetName string
 }
 
@@ -304,6 +305,7 @@ func (this *DbUserRightsManager) GetDefaultRightSetsList() []*DefaultRightSetMap
 		}
 		node := &DefaultRightSetMapNode{
 			Name:         v.Name,
+			Dsc:          v.Dsc,
 			RightSetName: setNode.Name,
 		}
 		mapList = append(mapList, node)
