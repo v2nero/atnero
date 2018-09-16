@@ -161,6 +161,7 @@ func (mng *DatabaseManager) init() {
 	orm.RegisterModel(new(Articles))
 	orm.RegisterModel(new(ArticleAttachedLabels))
 	orm.RegisterModel(new(ArticleComments))
+	orm.RegisterModel(new(DefaultRightSets))
 
 	mng.initDbVersion()
 	//mng.initDbMngEnable()

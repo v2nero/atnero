@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "atnero.com/blog/models"
+	"atnero.com/blog/models"
 	_ "atnero.com/blog/models/db"
 	"atnero.com/blog/models/monitor"
 	_ "atnero.com/blog/routers"
@@ -11,6 +11,7 @@ import (
 
 func main() {
 	//写用户权限管理
+	models.CheckRightSetDependencies()
 	monitor.InitMonitorRpcService()
 	beego.AddTemplateExt("html")
 	beego.Run()

@@ -71,6 +71,18 @@ INSERT INTO user_right_set2item_map(set_id, item_id)
         SELECT user_right_set.id, user_right_item.id FROM user_right_set, user_right_item
                 WHERE user_right_set.name = 'superuser' AND user_right_item.name = 'modify_db' ;
 
+CREATE TABLE default_right_sets(
+        id bigint NOT NULL AUTO_INCREMENT UNIQUE
+        ,name VARCHAR(40) UNIQUE
+        ,dsc VARCHAR(500)
+        ,right_set_id bigint NOT NULL
+        ,CONSTRAINT pk_default_rightsets PRIMARY KEY (
+                id
+        )
+        ,CONSTRAINT fk_default_rightsets_rightsetid FOREIGN KEY (right_set_id) references user_right_set(id)
+);
+
+
 -- 用户
 CREATE TABLE users(
         id bigint NOT NULL AUTO_INCREMENT UNIQUE
@@ -136,6 +148,7 @@ CREATE TABLE articles (
         ,content LONGTEXT NOT NULL
         ,sort_id bigint NOT NULL
         ,class_id bigint NOT NULL
+        ,right_set_id bigint NOT NULL
         ,create_time DATETIME NOT NULL DEFAULT now()
         ,lastupdate_time DATETIME NOT NULL DEFAULT now()
         ,view_count BIGINT NOT NULL DEFAULT 0
@@ -145,6 +158,7 @@ CREATE TABLE articles (
         ,CONSTRAINT fk_articles_userid FOREIGN KEY (user_id) references users(id)
         ,CONSTRAINT fk_articles_sortid FOREIGN KEY (sort_id) references article_sorts(id)
         ,CONSTRAINT fk_articles_classid FOREIGN KEY (class_id) references article_classes(id)
+        ,CONSTRAINT fk_articles_rightsetid FOREIGN KEY (right_set_id) references user_right_set(id)
 );
 
 
