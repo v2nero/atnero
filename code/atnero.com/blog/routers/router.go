@@ -16,4 +16,5 @@ func init() {
 	beego.Router("/manager/default_rightset", &controllers.ApiDefaultRightSetController{})
 	beego.Router("/manager/verify", &controllers.ManagerVerifyController{})
 	beego.Router("/login", &controllers.LoginController{})
+	beego.Router("/article/create", &controllers.ArticleCreateController{})
 }

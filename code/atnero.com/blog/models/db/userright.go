@@ -314,6 +314,33 @@ func (this *DbUserRightsManager) GetDefaultRightSetsList() []*DefaultRightSetMap
 	return mapList
 }
 
+func (this *DbUserRightsManager) GetDefaultRightSetName(name string) (string, error) {
+	var setName string
+	var err error
+	this.mutex.Lock()
+	for {
+		setNode, b := this.defaultRightSetsMap[name]
+		if !b {
+			err = fmt.Errorf("default right set %v not exist", name)
+		}
+		setName, err = this.GetRightSetNameById(setNode.RightSetId)
+		break
+	}
+	this.mutex.Unlock()
+	return setName, err
+}
+
+func (this *DbUserRightsManager) HasDefaultRightSet(name string) bool {
+	var bRet bool
+	this.mutex.Lock()
+	for {
+		_, bRet = this.defaultRightSetsMap[name]
+		break
+	}
+	this.mutex.Unlock()
+	return bRet
+}
+
 //非线程安全
 func (this *DbUserRightsManager) ormAddDeafultRightSet(
 	name string, dsc string, setId int64) (int64, error) {
@@ -533,6 +560,23 @@ func (this *DbUserRightsManager) AddRightSet(
 	}
 	this.mutex.Unlock()
 	return errRet
+}
+
+func (this *DbUserRightsManager) GetRightSetNameById(
+	id int64) (string, error) {
+	var errRet error
+	var setName string
+	this.mutex.Lock()
+	for {
+		setNode, b := this.setIdMap[id]
+		if !b {
+			errRet = fmt.Errorf("set with id %v not exist", id)
+			break
+		}
+		setName = setNode.Name
+	}
+	this.mutex.Unlock()
+	return setName, errRet
 }
 
 //非线程安全

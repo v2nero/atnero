@@ -13,6 +13,10 @@ type myRightSetDependencyNode struct {
 
 var myRightSetDependencies map[string]myRightSetDependencyNode
 
+func init() {
+	myRightSetDependencies = make(map[string]myRightSetDependencyNode)
+}
+
 func AddDependencyRightSet(name string, src string, dsc string) {
 	if len(name) == 0 {
 		panic(fmt.Errorf("invalid dependency name"))

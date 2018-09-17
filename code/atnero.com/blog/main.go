@@ -10,9 +10,19 @@ import (
 )
 
 func main() {
-	//写用户权限管理
+
+	//ckeditor4
+	ckeditor4Path := beego.AppConfig.String("ckeditor4")
+	if len(ckeditor4Path) == 0 {
+		beego.Error("[CKEDITOR4] missing ckeditor4")
+		return
+	}
+	beego.Info("[CKEDITOR4] path=", ckeditor4Path)
+	beego.SetStaticPath("/thirdparty/ckeditor4", ckeditor4Path)
+
 	models.CheckRightSetDependencies()
 	monitor.InitMonitorRpcService()
 	beego.AddTemplateExt("html")
+
 	beego.Run()
 }
