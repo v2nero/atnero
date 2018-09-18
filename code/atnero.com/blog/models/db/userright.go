@@ -155,7 +155,10 @@ func (this *DbUserRightsManager) loadRightSet2ItemMapping() {
 	var mapNodes []*UserRightSet2itemMap
 	o := orm.NewOrm()
 	qs := o.QueryTable("user_right_set2item_map")
-	_, err := qs.All(&mapNodes)
+	num, err := qs.All(&mapNodes)
+	if num == 0 {
+		return
+	}
 	if err != nil {
 		panic(err)
 	}

@@ -34,7 +34,7 @@ type Articles struct {
 	Content        string
 	SortId         int64
 	ClassId        int64
-	RightSetId     int64
+	Published      bool
 	CreateTime     time.Time `orm:"auto_now_add;type(datetime)"`
 	LastupdateTime time.Time `orm:"auto_now;type(datatime)"`
 	ViewCount      int64

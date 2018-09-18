@@ -39,7 +39,7 @@ CREATE TABLE user_right_item (
         )
 );
 
-INSERT INTO user_right_item(name, dsc, enable) VALUES ('modify_db', 'right to modify database, limited to superuser', true);
+-- INSERT INTO user_right_item(name, dsc, enable) VALUES ('modify_db', 'right to modify database, limited to superuser', true);
 
 -- 权限集
 -- 如administrator
@@ -53,7 +53,7 @@ CREATE TABLE user_right_set (
         )
 );
 
-INSERT INTO user_right_set(name, dsc) VALUES ('superuser', 'right to modify database, limited to superuser');
+-- INSERT INTO user_right_set(name, dsc) VALUES ('superuser', 'right to modify database, limited to superuser');
 
 -- 权限集到权限选项一对多映射
 CREATE TABLE user_right_set2item_map (
@@ -148,7 +148,7 @@ CREATE TABLE articles (
         ,content LONGTEXT NOT NULL
         ,sort_id bigint NOT NULL
         ,class_id bigint NOT NULL
-        ,right_set_id bigint NOT NULL
+        ,published boolean NOT NULL DEFAULT false
         ,create_time DATETIME NOT NULL DEFAULT now()
         ,lastupdate_time DATETIME NOT NULL DEFAULT now()
         ,view_count BIGINT NOT NULL DEFAULT 0
@@ -158,7 +158,6 @@ CREATE TABLE articles (
         ,CONSTRAINT fk_articles_userid FOREIGN KEY (user_id) references users(id)
         ,CONSTRAINT fk_articles_sortid FOREIGN KEY (sort_id) references article_sorts(id)
         ,CONSTRAINT fk_articles_classid FOREIGN KEY (class_id) references article_classes(id)
-        ,CONSTRAINT fk_articles_rightsetid FOREIGN KEY (right_set_id) references user_right_set(id)
 );
 
 

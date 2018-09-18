@@ -1,14 +1,10 @@
 package controllers
 
 import (
-	"atnero.com/blog/models"
+	_ "atnero.com/blog/models"
 	_ "atnero.com/blog/models/db"
 	_ "atnero.com/blog/models/session"
 )
-
-func init() {
-	models.AddDependencyRightSet("published_article_rightset", "ArticleCreateController", "公开")
-}
 
 type ArticleCreateController struct {
 	CommonPageContainerController
