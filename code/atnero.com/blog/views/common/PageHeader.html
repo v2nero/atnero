@@ -20,9 +20,18 @@
                                 <ul class="dropdown-menu">
                                         <li><a href="/manager/userrightitems">用户权限选项</a></li>
                                         <li><a href="/manager/userrightsets">用户权限集</a></li>
-                                        <li><a href="/manager/defaultuserrightsets">默认权限配置</a></li>
+                                        <!--li><a href="/manager/defaultuserrightsets">默认权限配置</a></li-->
+                                        <li><a href="/manager/articlesorts">文章类型</a></li>
+                                        <li><a href="/manager/articleclasses">文章归类</a></li>
                                 </ul>
                         </li>
+                        {{if .CommonUserInfo}}
+                                <li><a href="#">{{.CommonUserInfo.name}}</a></li>
+                                <li><a href="/logout">登出</a></li>
+                        {{else}}
+                                <li><a href="/login">登陆</a></li>
+                                <li><a href="/regist">注册</a></li>
+                        {{end}}
                 </ul>
         </div>
         </div>

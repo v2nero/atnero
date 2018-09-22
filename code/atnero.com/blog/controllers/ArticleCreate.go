@@ -3,7 +3,7 @@ package controllers
 import (
 	_ "atnero.com/blog/models"
 	_ "atnero.com/blog/models/db"
-	_ "atnero.com/blog/models/session"
+	blogSess "atnero.com/blog/models/session"
 )
 
 type ArticleCreateController struct {
@@ -11,14 +11,10 @@ type ArticleCreateController struct {
 }
 
 func (this *ArticleCreateController) Get() {
-	/*
-		if !models.TestManagerInst().BgManagerTestEnabled(&this.Controller) {
-			if !blogSess.BgManagerEnabled(&this.Controller) {
-				this.Abort("404")
-				return
-			}
-		}
-	*/
+	if !blogSess.Logined(&this.Controller) {
+		this.Abort("404")
+		return
+	}
 	//TODO: 增加权限控制
 	this.InitLayout()
 	this.TplName = "article/create.html"

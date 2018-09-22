@@ -208,6 +208,23 @@ func (this *DbUserRightsManager) GetRightSets() []string {
 	return keys
 }
 
+func (this *DbUserRightsManager) GetRightSetId(set string) (int64, error) {
+	var id int64
+	var errRet error
+	this.mutex.Lock()
+	for {
+		n, b := this.setMap[set]
+		if !b {
+			errRet = fmt.Errorf("Right set %v not exist", set)
+			break
+		}
+		id = n.Id
+		break
+	}
+	this.mutex.Unlock()
+	return id, errRet
+}
+
 func (this *DbUserRightsManager) HasRightItem(item string) bool {
 	var b bool
 	this.mutex.Lock()
@@ -298,15 +315,15 @@ func (this *DbUserRightsManager) RightSetHasRightItem(
 	return bRet
 }
 
-func (this *DbUserRightsManager) GetDefaultRightSetsList() []*DefaultRightSetMapNode {
-	var mapList []*DefaultRightSetMapNode
+func (this *DbUserRightsManager) GetDefaultRightSetsList() []DefaultRightSetMapNode {
+	var mapList []DefaultRightSetMapNode
 	this.mutex.Lock()
 	for _, v := range this.defaultRightSetsMap {
 		setNode := this.setIdMap[v.RightSetId]
 		if setNode == nil {
 			panic(fmt.Errorf("set %v not exist while it listed in default right sets map", v.RightSetId))
 		}
-		node := &DefaultRightSetMapNode{
+		node := DefaultRightSetMapNode{
 			Name:         v.Name,
 			Dsc:          v.Dsc,
 			RightSetName: setNode.Name,
@@ -577,6 +594,7 @@ func (this *DbUserRightsManager) GetRightSetNameById(
 			break
 		}
 		setName = setNode.Name
+		break
 	}
 	this.mutex.Unlock()
 	return setName, errRet

@@ -1,15 +1,18 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego"
+	_ "github.com/astaxie/beego"
 )
 
 type MainController struct {
-	beego.Controller
+	CommonPageContainerController
 }
 
-func (c *MainController) Get() {
-	c.Data["Website"] = "atnero.com"
-	c.Data["Email"] = ""
-	c.TplName = "index.tpl"
+func (this *MainController) Get() {
+
+	this.InitLayout()
+	this.TplName = "index.tpl"
+	this.Data["Title"] = "@Nero"
+	this.Data["Website"] = "atnero.com"
+	this.Data["Email"] = ""
 }

@@ -1,0 +1,46 @@
+{{if .AlreadyLogin}}
+<div>
+	<p>已经登陆</p>
+</div>
+{{else}}
+
+<h1>注册</h1>
+<hr>
+
+<form method="POST" action="/regist_action">
+	<div class="form-group">
+		<label>用户名</label>
+		<input type="text" class="form-control" name="user"/>
+	</div>
+	<div class="form-group">
+		<label>密码</label>
+		<input type="password" class="form-control" name="password"/>
+	</div>
+	<div class="form-group">
+		<label>密码确认</label>
+		<input type="password" class="form-control" name="passwordVerify"/>
+	</div>
+	<div class="form-group">
+		<label>电子邮件</label>
+		<input type="text" class="form-control" name="email"/>
+	</div>
+	<div class="modal-footer">
+		<input class="btn" class="btn btn-primary" type="submit"></button>
+	</div>
+</form>
+
+<script type="text/javascript">
+
+	$("form").submit(function() {
+		if ($("input[name='password']").prop("value") !=
+			$("input[name='passwordVerify']").prop("value")) {
+				alert("密码不一致");
+				$("input[name='password']").focus()
+				return false
+		}
+		return true
+	});
+
+</script>
+
+{{end}}

@@ -67,9 +67,10 @@ CREATE TABLE user_right_set2item_map (
         ,CONSTRAINT fk_user_right_set2itemmap_itemid FOREIGN KEY (item_id) references user_right_item(id) on delete cascade
 );
 
-INSERT INTO user_right_set2item_map(set_id, item_id)
+/* INSERT INTO user_right_set2item_map(set_id, item_id)
         SELECT user_right_set.id, user_right_item.id FROM user_right_set, user_right_item
                 WHERE user_right_set.name = 'superuser' AND user_right_item.name = 'modify_db' ;
+*/
 
 CREATE TABLE default_right_sets(
         id bigint NOT NULL AUTO_INCREMENT UNIQUE
@@ -97,16 +98,17 @@ CREATE TABLE users(
         ,CONSTRAINT fk_users_rightset FOREIGN KEY (rightset) references user_right_set(id)
 );
 
+/*
 INSERT INTO users(name, pwd, email, rightset)
         SELECT 'superuser', md5('superuser'), 'superuser@atnero.com', id FROM user_right_set
                 WHERE user_right_set.name = 'superuser';
+*/
 
 -- 文章分类
 -- 如 原创，转发等
 CREATE TABLE article_sorts (
         id bigint NOT NULL AUTO_INCREMENT UNIQUE
         ,name VARCHAR(40) UNIQUE
-        ,dsc VARCHAR(500)
         ,CONSTRAINT pk_article_sorts PRIMARY KEY (
                 id
         )
@@ -116,14 +118,10 @@ CREATE TABLE article_sorts (
 -- 如编程开发，数据库，linux之类的
 CREATE TABLE article_classes (
         id bigint NOT NULL AUTO_INCREMENT UNIQUE
-        ,user_id bigint NOT NULL
-        ,name VARCHAR(40) NOT NULL
-        ,dsc VARCHAR(500)
+        ,name VARCHAR(40) NOT NULL UNIQUE
         ,CONSTRAINT pk_article_classes PRIMARY KEY (
                 id
         )
-        ,CONSTRAINT article_classes_uniquename UNIQUE(user_id, name)
-        ,CONSTRAINT fk_article_classes FOREIGN KEY (user_id) references users(id)
 );
 
 -- 用户文章标签
@@ -131,7 +129,6 @@ CREATE TABLE article_labels (
         id bigint NOT NULL AUTO_INCREMENT UNIQUE
         ,user_id bigint NOT NULL
         ,name VARCHAR(40) NOT NULL
-        ,dsc VARCHAR(500)
         ,CONSTRAINT pk_article_labels PRIMARY KEY (
                 id
         )
@@ -144,7 +141,6 @@ CREATE TABLE articles (
         id bigint NOT NULL AUTO_INCREMENT UNIQUE
         ,user_id bigint NOT NULL
         ,title VARCHAR(100) NOT NULL
-        ,short_dsc VARCHAR(500)
         ,content LONGTEXT NOT NULL
         ,sort_id bigint NOT NULL
         ,class_id bigint NOT NULL
@@ -171,13 +167,17 @@ CREATE TABLE article_attached_labels (
         )
         ,CONSTRAINT fk_article_attached_labels_articleid FOREIGN KEY (article_id) references articles(id)
         ,CONSTRAINT fk_article_attached_labels_labelid FOREIGN KEY (label_id) references article_labels(id)
+        ,CONSTRAINT article_attached_labels_unique1 UNIQUE (article_id, label_id)
 );
 
 -- 回复
 CREATE TABLE article_comments (
         id bigint NOT NULL AUTO_INCREMENT UNIQUE
         , article_id bigint NOT NULL
+        , user_name VARCHAR(40) NOT NULL
+        , email VARCHAR(40) NOT NULL
         , content VARCHAR(2000) NOT NULL
+        , create_time DATETIME NOT null DEFAULT now()
         ,CONSTRAINT pk_article_comments PRIMARY KEY (
                 id
         )

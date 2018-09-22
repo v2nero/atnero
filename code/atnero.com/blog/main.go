@@ -25,4 +25,9 @@ func main() {
 	beego.AddTemplateExt("html")
 
 	beego.Run()
+
+	//TODO:
+	//1. 文章分类增加
+	//2. 暂不做标签, 后续修改
+	//3. 文章创建，修改,删除
 }

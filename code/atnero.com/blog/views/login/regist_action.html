@@ -1,0 +1,27 @@
+{{if .InternalError}}
+
+<div>内部错误</div>
+
+{{else if .AlreadyLogin}}
+
+<div>
+	<p>已经登陆</p>
+</div>
+
+{{else if .RegistResult}}
+
+<div>
+<p>注册成功</p>
+<a href="/login">去登陆</a>
+</div>
+
+{{else}}
+
+<div>
+	<div>
+		{{.FailReason}}
+	</div>
+	<button onclick="self.location=document.referrer;">返回</button>
+</div>
+
+{{end}}

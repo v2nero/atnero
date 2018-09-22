@@ -1,0 +1,56 @@
+<h1>{{.Explain}}</h1>
+<div class="table-responsive">
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>名称</th>
+		</tr>
+	</thead>
+	<tbody id="tableRightSets">
+		{{range .Items}}
+			<tr>
+				<td name="name">{{.}}</td>
+			</tr>
+		{{end}}
+	</tbody>
+</table>
+</div>
+
+<hr/>
+<div id="myForm">
+	<div class="form-group">
+		<label for="name">名称</label>
+		<input type="text" class="form-control" name="name">
+	</div>
+	<div class="form-group" id="createResult"> </div>
+	<div class="modal-footer">
+	　<button type="button" class="btn btn-primary" id="myFormBtnCreate">创建</button>　
+	</div>
+</div>
+
+<script type="text/javascript">
+
+function CreateRightSetCb(){
+	$.post("{{.FormActionUrl}}",
+	{
+		cmd: "add",
+		name: $("input[name='name']").prop("value"),
+	}, function(data, status) {
+		if (data == "success") {
+			newRow = "<tr> <td name=\"name\">"+
+					$("input[name='name']").prop("value") +
+				"</td></tr>";
+			
+			tbodyHtml = $("#tableRightSets").html()
+			tbodyHtml += newRow
+			$("#tableRightSets").html(tbodyHtml)
+			$("#createResult").html("<p class='text-success'>创建成功</p>")
+		} else {
+			$("#createResult").html("<p class='text-danger'>创建失败</p>")
+		}
+	});
+}
+
+$("#myFormBtnCreate").click(CreateRightSetCb);
+
+</script>

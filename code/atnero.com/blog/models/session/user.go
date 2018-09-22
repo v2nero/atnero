@@ -73,6 +73,17 @@ func UserHasRight(c *beego.Controller, item string) bool {
 	return models.UserRightsMngInst().RightSetHasRightItem(userRightSet, item)
 }
 
+func GetUserBaseInfo(c *beego.Controller) (name string, id int64, errRet error) {
+	if !Logined(c) {
+		errRet = fmt.Errorf("not login")
+		return
+	}
+	sessUserInfo := c.GetSession("user").(map[string]interface{})
+	name = sessUserInfo["name"].(string)
+	id = sessUserInfo["id"].(int64)
+	return
+}
+
 func init() {
 	models.AddDependencyRightSet("tourist_rightset", "user", "网站游客基本权限集")
 }

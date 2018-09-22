@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	blogSess "atnero.com/blog/models/session"
 	"github.com/astaxie/beego"
 )
 
@@ -13,4 +14,14 @@ func (this *CommonPageContainerController) InitLayout() {
 	this.LayoutSections = make(map[string]string)
 	this.LayoutSections["PageHeader"] = "common/PageHeader.html"
 	this.LayoutSections["PageFooter"] = "common/PageFooter.html"
+	userInfo := make(map[string]interface{})
+	if blogSess.Logined(&this.Controller) {
+		usrName, usrId, err := blogSess.GetUserBaseInfo(&this.Controller)
+		if err == nil {
+			userInfo["name"] = usrName
+			userInfo["id"] = usrId
+			this.Data["CommonUserInfo"] = userInfo
+		}
+	}
+
 }

@@ -8,6 +8,7 @@ type UserRightsManagerIf interface {
 	Init()
 	GetRightItems() []string
 	GetRightSets() []string
+	GetRightSetId(set string) (int64, error)
 	HasRightItem(item string) bool
 	HasRightSet(set string) bool
 	RightSetHasRightItem(set string, item string) bool
@@ -21,7 +22,7 @@ type UserRightsManagerIf interface {
 	AddRightItem2RightSet(set string, item string) error
 	DelRightItemFromRightSet(set string, item string) error
 	GetRightSetRightItems(set string) []string
-	GetDefaultRightSetsList() []*db.DefaultRightSetMapNode
+	GetDefaultRightSetsList() []db.DefaultRightSetMapNode
 	AddDefaultRightSet(name string, dsc string, rightSetName string) error
 	UpdateDefaultRightSet(name string, dsc string, rightSetName string) error
 	GetDefaultRightSetName(name string) (string, error)
