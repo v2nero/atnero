@@ -103,8 +103,8 @@ func (this *ApiArticleController) handleModify() bool {
 		return false
 	}
 
-	oldData, err := models.ArticleManagerInst().GetArticleData(id)
-	if err != nil || oldData.UserId != userId {
+	oldShortView, err := models.ArticleManagerInst().GetArticleShortView(id)
+	if err != nil || oldShortView.UserId != userId {
 		strRightRequired = "edit_others_article"
 	}
 	if !blogSess.UserHasRight(&this.Controller, strRightRequired) {

@@ -576,6 +576,23 @@ func (this *DbArticleManager) GetArticlesNumOfUser(
 	return recordCnt, errRet
 }
 
+func (this *DbArticleManager) GetArticleShortView(id int64) (*dbview.AritcleShortView, error) {
+	var view dbview.AritcleShortView
+	var errRet error
+	for {
+		o := orm.NewOrm()
+
+		err := o.Raw("select a.id, a.user_id, users.name as 'user_name', a.title, sort.name as 'sort_name', class.name as 'class_name', a.published, a.view_count, a.lastupdate_time from articles a INNER JOIN users ON a.user_id = users.id INNER JOIN article_sorts sort ON sort.id = a.sort_id INNER JOIN article_classes class ON class.id = a.class_id where a.id=?",
+			id).QueryRow(&view)
+		if err != nil {
+			errRet = err
+		}
+
+		break
+	}
+	return &view, errRet
+}
+
 func (this *DbArticleManager) GetArticlesShortViewOfUser(
 	userId int64, publishedOnly bool,
 	index int64, limit int64) ([]dbview.AritcleShortView, error) {
@@ -584,13 +601,13 @@ func (this *DbArticleManager) GetArticlesShortViewOfUser(
 	for {
 		o := orm.NewOrm()
 		if publishedOnly {
-			_, err := o.Raw("select id, title, view_count from articles where user_id=? AND published=? limit ?,?",
+			_, err := o.Raw("select a.id, a.user_id, users.name as 'user_name', a.title, sort.name as 'sort_name', class.name as 'class_name', a.published, a.view_count, a.lastupdate_time from articles a INNER JOIN users ON a.user_id = users.id INNER JOIN article_sorts sort ON sort.id = a.sort_id INNER JOIN article_classes class ON class.id = a.class_id where a.user_id=? AND a.published=? limit ?,?",
 				userId, true, index*limit, limit).QueryRows(&views)
 			if err != nil {
 				errRet = err
 			}
 		} else {
-			_, err := o.Raw("select id, title, view_count from articles where user_id=? limit ?,?",
+			_, err := o.Raw("select a.id, a.user_id, users.name as 'user_name', a.title, sort.name as 'sort_name', class.name as 'class_name', a.published, a.view_count, a.lastupdate_time from articles a INNER JOIN users ON a.user_id = users.id INNER JOIN article_sorts sort ON sort.id = a.sort_id INNER JOIN article_classes class ON class.id = a.class_id where a.user_id=? limit ?,?",
 				userId, index*limit, limit).QueryRows(&views)
 			if err != nil {
 				errRet = err
@@ -637,13 +654,13 @@ func (this *DbArticleManager) GetArticlesShortViewOfAll(publishedOnly bool,
 	for {
 		o := orm.NewOrm()
 		if publishedOnly {
-			_, err := o.Raw("select id, title, view_count from articles where published=? limit ?,?",
+			_, err := o.Raw("select a.id, a.user_id, users.name as 'user_name', a.title, sort.name as 'sort_name', class.name as 'class_name', a.published, a.view_count, a.lastupdate_time from articles a INNER JOIN users ON a.user_id = users.id INNER JOIN article_sorts sort ON sort.id = a.sort_id INNER JOIN article_classes class ON class.id = a.class_id where published=? limit ?,?",
 				true, index*limit, limit).QueryRows(&views)
 			if err != nil {
 				errRet = err
 			}
 		} else {
-			_, err := o.Raw("select id, title, view_count from articles limit ?,?",
+			_, err := o.Raw("select a.id, a.user_id, users.name as 'user_name', a.title, sort.name as 'sort_name', class.name as 'class_name', a.published, a.view_count, a.lastupdate_time from articles a INNER JOIN users ON a.user_id = users.id INNER JOIN article_sorts sort ON sort.id = a.sort_id INNER JOIN article_classes class ON class.id = a.class_id limit ?,?",
 				index*limit, limit).QueryRows(&views)
 			if err != nil {
 				errRet = err
@@ -710,6 +727,7 @@ func (this *DbArticleManager) GetArticleData(id int64) (*dbview.ArticleDataView,
 		view.Published = a.Published
 		view.CreateTime = a.CreateTime
 		view.LastupdateTime = a.LastupdateTime
+		view.ViewCount = a.ViewCount
 
 		labelViews := []dbview.ArticleLabelView{}
 		for _, v := range labels {

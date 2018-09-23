@@ -7,7 +7,13 @@
 	<div>
 		<blockquote>
 		<h4><a href="/article/view/{{.Id}}">{{.Title}}</a></h4>
-		{{if $.Editable}} <div class="text-right"><a href="/article/modify/{{.Id}}">编辑</a></div> {{end}}
+		<div>
+			<u>{{.SortName}}</u>
+			<u>{{.ClassName}}</u>
+			<u>{{.UserName}}</u>
+			<u>更新:{{date .LastupdateTime "Y-m-d H:i:s"}}</u>
+			{{if $.Editable}} <a href="/article/modify/{{.Id}}">编辑</a>{{end}}
+		</div>
 		</blockquote>
 	</div>
 	{{end}}

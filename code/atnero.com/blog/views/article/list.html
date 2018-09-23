@@ -5,8 +5,16 @@
 {{else}}
 	{{range .ArticleShortViews}}
 	<div>
+		<blockquote>
 		<h4><a href="/article/view/{{.Id}}">{{.Title}}</a></h4>
-		<hr>
+		<div>
+			<u>{{.SortName}}</u>
+			<u>{{.ClassName}}</u>
+			<u>{{.UserName}}</u>
+			<u>更新:{{date .LastupdateTime "Y-m-d H:i:s"}}</u>
+			
+		</div>
+		</blockquote>
 	</div>
 	{{end}}
 

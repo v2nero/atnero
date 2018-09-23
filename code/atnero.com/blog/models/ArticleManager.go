@@ -40,6 +40,7 @@ type ArticleManagerIf interface {
 	GetArticlesNumOfAll(publishedOnly bool) (int, error)
 	GetArticlesShortViewOfAll(publishedOnly bool,
 		index int64, limit int64) ([]dbview.AritcleShortView, error)
+	GetArticleShortView(id int64) (*dbview.AritcleShortView, error)
 	GetArticleData(id int64) (*dbview.ArticleDataView, error)
 }
 

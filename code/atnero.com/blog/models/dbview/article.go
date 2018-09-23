@@ -27,6 +27,7 @@ type ArticleDataView struct {
 	SortName       string
 	ClassName      string
 	Published      bool
+	ViewCount      int64
 	CreateTime     time.Time
 	LastupdateTime time.Time
 	Labels         *[]ArticleLabelView
@@ -34,7 +35,13 @@ type ArticleDataView struct {
 }
 
 type AritcleShortView struct {
-	Id        int64
-	Title     string
-	ViewCount int64
+	Id             int64
+	UserId         int64
+	UserName       string
+	Title          string
+	SortName       string
+	ClassName      string
+	Published      bool
+	ViewCount      int64
+	LastupdateTime time.Time
 }
