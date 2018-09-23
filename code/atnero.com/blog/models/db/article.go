@@ -272,7 +272,7 @@ func (this *DbArticleManager) AddClass(name string) error {
 			errRet = fmt.Errorf("Class [%s] already exist", name)
 			break
 		}
-		id, err := this.ormAddSort(name)
+		id, err := this.ormAddClass(name)
 		if err != nil {
 			break
 		}
@@ -660,9 +660,10 @@ func (this *DbArticleManager) GetArticleData(id int64) (*dbview.ArticleDataView,
 	for {
 		a := Articles{}
 		o := orm.NewOrm()
-		err := o.Raw("SELECT * FROME articles WHERE id = ?", id).QueryRow(&a)
+		err := o.Raw("SELECT * FROM articles WHERE id = ?", id).QueryRow(&a)
 		if err != nil {
 			errRet = err
+			break
 		}
 
 		sortName, err := this.GetSortName(a.SortId)
@@ -678,28 +679,28 @@ func (this *DbArticleManager) GetArticleData(id int64) (*dbview.ArticleDataView,
 		}
 
 		usr := Users{}
-		err = o.Raw("SELECT * FROME users WHERE id = ?", a.UserId).QueryRow(&usr)
+		err = o.Raw("SELECT * FROM users WHERE id = ?", a.UserId).QueryRow(&usr)
 		if err != nil {
 			errRet = err
 			break
 		}
 
 		var labels []dbview.ArticleLabelView
-		err = o.Raw(`SELECT l.id, a.name FROME article_attached_labels a \
-				LEFT OUTER JOIN article_labels l ON a.label_id = l.id  WHERE a.article_id = ?`, a.UserId).QueryRow(&labels)
+		_, err = o.Raw("SELECT l.id, l.name FROM article_attached_labels a LEFT OUTER JOIN article_labels l ON a.label_id = l.id  WHERE a.article_id = ?",
+			a.Id).QueryRows(&labels)
 		if err != nil {
 			errRet = err
 			break
 		}
 
 		var comments []ArticleComments
-		_, err = o.Raw("SELECT * FROME article_comments WHERE article_id = ?", a.Id).QueryRows(&comments)
+		_, err = o.Raw("SELECT * FROM article_comments WHERE article_id = ?", a.Id).QueryRows(&comments)
 		if err != nil {
 			errRet = err
 			break
 		}
 
-		view.ArticleId = a.Id
+		view.Id = a.Id
 		view.ClassName = className
 		view.SortName = sortName
 		view.Content = a.Content

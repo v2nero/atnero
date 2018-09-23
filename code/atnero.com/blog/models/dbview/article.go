@@ -19,7 +19,7 @@ type ArticleLabelView struct {
 }
 
 type ArticleDataView struct {
-	ArticleId      int64
+	Id             int64
 	UserId         int64
 	UserName       string
 	Title          string
@@ -34,7 +34,7 @@ type ArticleDataView struct {
 }
 
 type AritcleShortView struct {
-	ArticleId int64
+	Id        int64
 	Title     string
 	ViewCount int64
 }

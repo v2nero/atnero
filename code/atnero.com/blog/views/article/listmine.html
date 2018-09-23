@@ -1,0 +1,43 @@
+{{if .OutOfRight}}
+	<div>无权限</div>
+{{else if .InternalError}}
+	<div>内部错误</div>
+{{else}}
+	{{range .ArticleShortViews}}
+	<div>
+		<blockquote>
+		<h4><a href="/article/view/{{.Id}}">{{.Title}}</a></h4>
+		{{if $.Editable}} <div class="text-right"><a href="/article/edit/{{.Id}}">编辑</a></div> {{end}}
+		</blockquote>
+	</div>
+	{{end}}
+
+	{{if .TotalPages}}
+	<div>
+	<ul class="pagination" id="pagelist">
+	</ul>
+	</div>
+
+	<script type="text/javascript">
+
+	function InitPageList() {
+		currentPage = {{.CurrentPageIndex}}
+		totalPages = {{.TotalPages}}
+
+		html = ""
+		for (i = 0; i < totalPages; ++i) {
+			if (i == currentPage) {
+				html += "<li>"+(i+1)+"</li>"
+			} else {
+				html += "<li><a href=\"/article/listmine/"+i+"\">"+(i+1)+"</a></li>"
+			}
+		}
+		$("#pagelist").html(html)
+	}
+
+	InitPageList()
+
+	</script>
+
+	{{end}}
+{{end}}

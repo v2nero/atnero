@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	_ "atnero.com/blog/models"
+	"atnero.com/blog/models"
 	_ "atnero.com/blog/models/db"
 	blogSess "atnero.com/blog/models/session"
 )
@@ -15,8 +15,10 @@ func (this *ArticleCreateController) Get() {
 		this.Abort("404")
 		return
 	}
-	//TODO: 增加权限控制
+
 	this.InitLayout()
 	this.TplName = "article/create.html"
 	this.Data["Title"] = "博客创建 @Nero"
+	this.Data["ArticleSorts"] = models.ArticleManagerInst().GetSorts()
+	this.Data["ArticleClasses"] = models.ArticleManagerInst().GetClasses()
 }

@@ -49,8 +49,8 @@ func Logout(c *beego.Controller) {
 func UserHasRight(c *beego.Controller, item string) bool {
 	var userRightSet string
 	for {
-		sessUserInfo := c.GetSession("user").(map[string]interface{})
-		if sessUserInfo != nil {
+		sessUserInfo, ok := c.GetSession("user").(map[string]interface{})
+		if ok {
 			s := sessUserInfo["rightset"]
 			if s != nil {
 				userRightSet = s.(string)
@@ -59,18 +59,25 @@ func UserHasRight(c *beego.Controller, item string) bool {
 				}
 			}
 		}
-		var err error
-		userRightSet, err = models.UserRightsMngInst().GetDefaultRightSetName("tourist_rightset")
-		if err != nil {
-			beego.Error("[RightSet]", err)
+		hasRightSet := models.UserRightsMngInst().HasRightSet("tourist_rightset")
+		if !hasRightSet {
+			beego.Error("[RightSet] missing 'tourist_rightset'")
 			break
 		}
+		userRightSet = "tourist_rightset"
 		break
 	}
 	if len(userRightSet) == 0 {
 		return false
 	}
-	return models.UserRightsMngInst().RightSetHasRightItem(userRightSet, item)
+	if !models.UserRightsMngInst().RightSetHasRightItem(userRightSet, item) {
+		return false
+	}
+	enabled, err := models.UserRightsMngInst().RightItemEnabled(item)
+	if err != nil {
+		return false
+	}
+	return enabled
 }
 
 func GetUserBaseInfo(c *beego.Controller) (name string, id int64, errRet error) {

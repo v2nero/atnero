@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-
 	//ckeditor4
 	ckeditor4Path := beego.AppConfig.String("ckeditor4")
 	if len(ckeditor4Path) == 0 {
@@ -23,11 +22,12 @@ func main() {
 	models.CheckRightSetDependencies()
 	monitor.InitMonitorRpcService()
 	beego.AddTemplateExt("html")
+	beego.AddTemplateExt("xml")
 
 	beego.Run()
 
 	//TODO:
-	//1. ÎÄÕÂ·ÖÀàÔö¼Ó
-	//2. Ôİ²»×ö±êÇ©, ºóĞøĞŞ¸Ä
-	//3. ÎÄÕÂ´´½¨£¬ĞŞ¸Ä,É¾³ı
+	//1. æ–‡ç« åˆ›å»ºï¼Œä¿®æ”¹,åˆ é™¤
+	//2. æ³¨å†Œå®è¡Œé‚€è¯·ç æœºåˆ¶, timeout
+	//3. è‹±æ–‡
 }

@@ -339,11 +339,17 @@ func (this *DbUserRightsManager) GetDefaultRightSetName(name string) (string, er
 	var err error
 	this.mutex.Lock()
 	for {
-		setNode, b := this.defaultRightSetsMap[name]
+		defaultSetNode, b := this.defaultRightSetsMap[name]
 		if !b {
 			err = fmt.Errorf("default right set %v not exist", name)
+			break
 		}
-		setName, err = this.GetRightSetNameById(setNode.RightSetId)
+		setNode, bExist := this.setIdMap[defaultSetNode.RightSetId]
+		if !bExist {
+			err = fmt.Errorf("right set %s not exist", defaultSetNode.Name)
+			break
+		}
+		setName = setNode.Name
 		break
 	}
 	this.mutex.Unlock()

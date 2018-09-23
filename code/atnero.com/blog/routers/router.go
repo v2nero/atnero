@@ -6,7 +6,8 @@ import (
 )
 
 func init() {
-	beego.Router("/", &controllers.MainController{})
+	//beego.Router("/", &controllers.MainController{})
+	beego.Router("/", &controllers.ArticleListController{})
 	beego.Router("/manager/userrightitems", &controllers.ManagerUserRightItemsController{})
 	beego.Router("/manager/userrightsets", &controllers.ManagerUserRightSetsController{})
 	beego.Router("/manager/userrightset_modify/:setname", &controllers.ManagerUserRightSetModifyController{})
@@ -24,4 +25,8 @@ func init() {
 	beego.Router("/regist", &controllers.RegistController{})
 	beego.Router("/regist_action", &controllers.RegistActionController{})
 	beego.Router("/article/create", &controllers.ArticleCreateController{})
+	beego.Router("/article/view/:id", &controllers.ArticleViewController{})
+	beego.Router("/article/list/?:index", &controllers.ArticleListController{})
+	beego.Router("/article/listmine/?:index", &controllers.ArticleListMineController{})
+	beego.Router("/api_article", &controllers.ApiArticleController{})
 }
