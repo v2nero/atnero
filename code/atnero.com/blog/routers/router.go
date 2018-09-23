@@ -28,5 +28,6 @@ func init() {
 	beego.Router("/article/view/:id", &controllers.ArticleViewController{})
 	beego.Router("/article/list/?:index", &controllers.ArticleListController{})
 	beego.Router("/article/listmine/?:index", &controllers.ArticleListMineController{})
+	beego.Router("/article/modify/:id", &controllers.ArticleModifyController{})
 	beego.Router("/api_article", &controllers.ApiArticleController{})
 }

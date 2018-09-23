@@ -25,7 +25,7 @@
 		html = ""
 		for (i = 0; i < totalPages; ++i) {
 			if (i == currentPage) {
-				html += "<li>"+(i+1)+"</li>"
+				html += "<li  class=\"active\"><a href=\"#\">"+(i+1)+"</a></li>"
 			} else {
 				html += "<li><a href=\"/article/list/"+i+"\">"+(i+1)+"</a></li>"
 			}

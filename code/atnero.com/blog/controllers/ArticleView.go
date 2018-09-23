@@ -29,7 +29,7 @@ func (this *ArticleViewController) Get() {
 	}
 
 	bLogin := false
-	userName, userId, err := blogSess.GetUserBaseInfo(&this.Controller)
+	_, userId, err := blogSess.GetUserBaseInfo(&this.Controller)
 	if err == nil {
 		bLogin = true
 	}
@@ -59,8 +59,5 @@ func (this *ArticleViewController) Get() {
 	if blogSess.UserHasRight(&this.Controller, editRightItem) {
 		this.Data["Editable"] = true
 	}
-	this.Data["ArticleId"] = articleData.Id
-	this.Data["ArticleTitle"] = articleData.Title
-	this.Data["ArticleContent"] = articleData.Content
-	this.Data["ArticleWriter"] = userName
+	this.Data["ArticleDataView"] = articleData
 }

@@ -672,7 +672,7 @@ func (this *DbArticleManager) GetArticleData(id int64) (*dbview.ArticleDataView,
 			break
 		}
 
-		className, err := this.GetSortName(a.ClassId)
+		className, err := this.GetClassName(a.ClassId)
 		if err != nil {
 			errRet = err
 			break

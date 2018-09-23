@@ -16,6 +16,11 @@ func (this *ArticleCreateController) Get() {
 		return
 	}
 
+	if !blogSess.UserHasRight(&this.Controller, "create_article") {
+		this.Abort("404")
+		return
+	}
+
 	this.InitLayout()
 	this.TplName = "article/create.html"
 	this.Data["Title"] = "博客创建 @Nero"

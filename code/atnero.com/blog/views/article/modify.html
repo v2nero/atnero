@@ -1,0 +1,98 @@
+<script src="/thirdparty/ckeditor4/ckeditor.js"></script>
+
+<h1>修改博客</h1>
+<hr>
+<div id="ArticleId" name="{{.ArticleDataView.Id}}"></div>
+<div class="form-group">
+	<input type="text" id="txtTitle" class="form-control" placeholder="输入文章标题" value="{{.ArticleDataView.Title}}">
+</div>
+
+<div class="form-group">
+<textarea name="editor" id="myEditor" rows="20" cols="80">
+{{.ArticleDataView.Content}}
+</textarea>
+</div>
+
+<div class="form-group">
+	<label for="articleSort">文章类型</label>
+	<select name="articleSort">
+		{{range .ArticleSorts}}
+		<option value="{{.}}">{{.}}</option>
+		{{end}}
+	</select>
+	<label for="articleClasses">博客分类</label>
+	<select name="articleClasses">
+		{{range .ArticleClasses}}
+		<option value="{{.}}">{{.}}</option>
+		{{end}}
+	</select>
+</div>
+
+
+<div class="form-group">
+	<label><input type="checkbox" name="publish" {{if .ArticleDataView.Published}}{{else}}checked="checked"{{end}}>秘密文章</label>
+</div>
+
+<div class="modal-footer">
+	<button type="button" class="btn btn-primary" id="btnCreate">发布</button>　
+</div>
+
+<div class="form-group" id="createResult"> </div>
+
+<script type="text/javascript">
+
+function CreateCb(){
+	$("#createResult").html("请等待...")
+	$("#btnCreate").attr("disable", "true");
+	try {
+		$.post("/api_article",
+		{
+			cmd: "modify",
+			id: $("#ArticleId").attr("name"),
+			title: $("#txtTitle").prop("value"),
+			sort: $("select[name='articleSort']").prop("value"),
+			class: $("select[name='articleClasses']").prop("value"),
+			publish: $("input[name='publish']").prop("checked") ? "false":"true",
+			content: CKEDITOR.instances.myEditor.getData(),
+		}, function(xmlText, status) {
+			try {
+				bFail = true
+				xml = $.parseHTML(xmlText)
+				do {
+					if ($(xml).find("result").text() != "success") {
+						break;
+					}
+					strArticleId = $(xml).find("article").attr("id")
+					window.location.href="/article/view/"+strArticleId;
+					bFail = false
+				} while (0);
+				if (bFail) {
+					$("#createResult").html("<p class='text-danger'>更新失败</p>")
+					$("#btnCreate").attr("disable", "false");
+				}
+			} catch (err) {
+				if (bFail) {
+					$("#createResult").html("<p class='text-danger'>更新失败</p>")
+					$("#btnCreate").attr("disable", "false");
+				}
+			}
+		});
+	} catch(err) {
+		$("#createResult").html("<p class='text-danger'>脚本出错</p>")
+		$("#btnCreate").attr("disable", "false");
+	}
+}
+
+function InitSortAndClass() {
+	sortName = {{.ArticleDataView.SortName}}
+	className = {{.ArticleDataView.ClassName}}
+	$("select[name='articleSort']").val(sortName)
+	$("select[name='articleClasses']").val(className)
+}
+
+$("#btnCreate").click(CreateCb);
+InitSortAndClass()
+
+CKEDITOR.replace("myEditor")
+
+</script>

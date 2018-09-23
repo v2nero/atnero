@@ -7,7 +7,7 @@
 	<div>
 		<blockquote>
 		<h4><a href="/article/view/{{.Id}}">{{.Title}}</a></h4>
-		{{if $.Editable}} <div class="text-right"><a href="/article/edit/{{.Id}}">编辑</a></div> {{end}}
+		{{if $.Editable}} <div class="text-right"><a href="/article/modify/{{.Id}}">编辑</a></div> {{end}}
 		</blockquote>
 	</div>
 	{{end}}
@@ -27,7 +27,7 @@
 		html = ""
 		for (i = 0; i < totalPages; ++i) {
 			if (i == currentPage) {
-				html += "<li>"+(i+1)+"</li>"
+				html += "<li class=\"active\"><a href=\"#\">"+(i+1)+"</a></li>"
 			} else {
 				html += "<li><a href=\"/article/listmine/"+i+"\">"+(i+1)+"</a></li>"
 			}

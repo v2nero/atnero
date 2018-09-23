@@ -1,10 +1,22 @@
-<div id="Title" name="{{.ArticleId}}"></div>
+<div id="Title" name="{{.ArticleDataView.Id}}"></div>
 <blockquote>
-<p>{{.ArticleTitle}}</p>
+<span class="label label-primary">{{.ArticleDataView.SortName}}</span><span>&nbsp{{.ArticleDataView.Title}}</span>
 </blockquote>
 <div>
-	{{.ArticleWriter}}
+	<u>{{.ArticleDataView.UserName}}</u>
+	<u>{{.ArticleDataView.ClassName}}</u>
+	<u>创建:{{date .ArticleDataView.CreateTime "Y-m-d H:i:s"}}</u>
+	<u>更新:{{date .ArticleDataView.LastupdateTime "Y-m-d H:i:s"}}</u>
+	{{if .Editable}}
+		<a href="/article/modify/{{.ArticleDataView.Id}}">编辑</a>
+	{{end}}
 </div>
 <div>
-{{.ArticleContent}}
+	<hr/>
 </div>
+<div id="content">
+</div>
+
+<script type="text/javascript">
+$("#content").html({{.ArticleDataView.Content}})
+</script>

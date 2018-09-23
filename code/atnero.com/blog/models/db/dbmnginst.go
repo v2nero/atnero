@@ -137,7 +137,7 @@ func (mng *DatabaseManager) initDbMngEnable() {
 
 func (mng *DatabaseManager) init() {
 	orm.RegisterDriver("mysql", orm.DRMySQL)
-	ds := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8",
+	ds := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&loc=Local",
 		mng.DbConfig.Username,
 		mng.DbConfig.Password,
 		mng.DbConfig.Host,
