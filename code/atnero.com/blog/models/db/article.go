@@ -619,6 +619,44 @@ func (this *DbArticleManager) GetArticlesShortViewOfUser(
 	return views, errRet
 }
 
+func (this *DbArticleManager) GetArticlesNumOfClass(classId int64) (int, error) {
+	var recordCnt int
+	var errRet error
+	for {
+		cntView := struct {
+			Cnt int
+		}{}
+
+		o := orm.NewOrm()
+		err := o.Raw(`select COUNT(id) as "cnt" from articles where class_id=? AND published=true`,
+			classId).QueryRow(&cntView)
+		if err != nil {
+			errRet = err
+		}
+		recordCnt = cntView.Cnt
+		break
+	}
+
+	return recordCnt, errRet
+}
+
+func (this *DbArticleManager) GetArticlesShortViewOfClass(classId int64,
+	index int64, limit int64) ([]dbview.AritcleShortView, error) {
+	var views []dbview.AritcleShortView
+	var errRet error
+	for {
+		o := orm.NewOrm()
+		_, err := o.Raw("select a.id, a.user_id, users.name as 'user_name', a.title, sort.name as 'sort_name', class.name as 'class_name', a.published, a.view_count, a.lastupdate_time from articles a INNER JOIN users ON a.user_id = users.id INNER JOIN article_sorts sort ON sort.id = a.sort_id INNER JOIN article_classes class ON class.id = a.class_id where a.class_id=? AND a.published=true limit ?,?",
+			classId, index*limit, limit).QueryRows(&views)
+		if err != nil {
+			errRet = err
+		}
+
+		break
+	}
+	return views, errRet
+}
+
 func (this *DbArticleManager) GetArticlesNumOfAll(
 	publishedOnly bool) (int, error) {
 	var recordCnt int

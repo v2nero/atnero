@@ -37,6 +37,9 @@ type ArticleManagerIf interface {
 	GetArticlesNumOfUser(userId int64, publishedOnly bool) (int, error)
 	GetArticlesShortViewOfUser(userId int64, publishedOnly bool,
 		index int64, limit int64) ([]dbview.AritcleShortView, error)
+	GetArticlesNumOfClass(classId int64) (int, error)
+	GetArticlesShortViewOfClass(classId int64,
+		index int64, limit int64) ([]dbview.AritcleShortView, error)
 	GetArticlesNumOfAll(publishedOnly bool) (int, error)
 	GetArticlesShortViewOfAll(publishedOnly bool,
 		index int64, limit int64) ([]dbview.AritcleShortView, error)

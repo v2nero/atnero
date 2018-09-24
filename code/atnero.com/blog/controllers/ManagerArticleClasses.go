@@ -10,10 +10,6 @@ type ManagerArticleClassesController struct {
 	CommonPageContainerController
 }
 
-type articleClassExpose struct {
-	Name string
-}
-
 func (this *ManagerArticleClassesController) Get() {
 	if !models.TestManagerInst().BgManagerTestEnabled(&this.Controller) {
 		if !blogSess.BgManagerEnabled(&this.Controller) {

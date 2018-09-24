@@ -120,11 +120,9 @@ func (this *ApiArticleController) handleModify() bool {
 }
 
 func (this *ApiArticleController) Post() {
-	if !models.TestManagerInst().BgManagerTestEnabled(&this.Controller) {
-		if !blogSess.BgManagerEnabled(&this.Controller) {
-			this.Abort("404")
-			return
-		}
+	if !blogSess.Logined(&this.Controller) {
+		this.Abort("404")
+		return
 	}
 
 	result := false
