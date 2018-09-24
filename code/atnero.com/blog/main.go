@@ -9,7 +9,12 @@ import (
 	_ "github.com/astaxie/beego/logs"
 )
 
+const (
+	ReleaseVersion = "0.1.0"
+)
+
 func main() {
+	beego.Info("[Version] ReleaseVersion ", ReleaseVersion)
 	//ckeditor4
 	ckeditor4Path := beego.AppConfig.String("ckeditor4")
 	if len(ckeditor4Path) == 0 {

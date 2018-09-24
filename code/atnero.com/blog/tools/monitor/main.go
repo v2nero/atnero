@@ -6,6 +6,10 @@ import (
 	"github.com/hprose/hprose-golang/rpc"
 )
 
+const (
+	ReleaseVersion = "0.1.0"
+)
+
 type MonitorServices struct {
 	EnableBgManager   func() string
 	StopService       func()
@@ -29,8 +33,8 @@ func init() {
 }
 
 func main() {
+	fmt.Printf("Release Version: %s\n", ReleaseVersion)
 	flag.Parse()
-
 	monitorAdd := fmt.Sprintf("tcp4://127.0.0.1:%s/", flagArgs.port)
 	fmt.Println("Monitor Address:", monitorAdd)
 	client := rpc.NewTCPClient(monitorAdd)
