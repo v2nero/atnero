@@ -25,7 +25,7 @@ func (this *ManagerUserRightSetsController) Get() {
 	}
 	this.InitLayout()
 	this.TplName = "manager/userrightsets.html"
-	this.Data["Title"] = "[后台管理]用户权限集 @Nero"
+	this.Data["PageTitle"] = "[后台管理]用户权限集 @Nero"
 
 	//权限项
 	exposeSets := []userRightSetExpose{}

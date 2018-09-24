@@ -19,7 +19,7 @@ func (this *ManagerDefaultUserRightSetsController) Get() {
 	}
 	this.InitLayout()
 	this.TplName = "manager/defaultuserrightsets.html"
-	this.Data["Title"] = "[后台管理]默认权限配置 @Nero"
+	this.Data["PageTitle"] = "[后台管理]默认权限配置 @Nero"
 
 	mng := models.UserRightsMngInst()
 	exposeDefaultRightSets := mng.GetDefaultRightSetsList()

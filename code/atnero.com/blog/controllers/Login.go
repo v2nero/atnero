@@ -12,7 +12,7 @@ type LoginController struct {
 func (this *LoginController) Get() {
 	this.InitLayout()
 	this.TplName = "login/login.html"
-	this.Data["Title"] = "登陆"
+	this.Data["PageTitle"] = "登陆"
 	if blogSess.Logined(&this.Controller) {
 		this.Data["AlreadyLogin"] = true
 		return
@@ -27,7 +27,7 @@ type loginInfo struct {
 func (this *LoginController) Post() {
 	this.InitLayout()
 	this.TplName = "login/login.html"
-	this.Data["Title"] = "登陆"
+	this.Data["PageTitle"] = "登陆"
 
 	//已经登陆，显示错误
 	if blogSess.Logined(&this.Controller) {

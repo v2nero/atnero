@@ -12,7 +12,7 @@ type LogoutController struct {
 func (this *LogoutController) Get() {
 	this.InitLayout()
 	this.TplName = "login/logout.html"
-	this.Data["Title"] = "登出"
+	this.Data["PageTitle"] = "登出"
 	blogSess.Logout(&this.Controller)
 	this.LayoutSections["Scripts"] = "common/Redirection.html"
 	this.Data["RedirectionURL"] = "/"

@@ -19,7 +19,7 @@ func (this *ManagerUserRightSetModifyController) Get() {
 	}
 	this.InitLayout()
 	this.TplName = "manager/userrightset_modify.html"
-	this.Data["Title"] = "[后台管理]用户权限集修改 @Nero"
+	this.Data["PageTitle"] = "[后台管理]用户权限集修改 @Nero"
 	rightMng := models.UserRightsMngInst()
 
 	setName := this.Ctx.Input.Param(":setname")

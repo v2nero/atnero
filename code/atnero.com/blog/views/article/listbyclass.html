@@ -1,0 +1,52 @@
+{{if .OutOfRight}}
+	<div>无权限</div>
+{{else if .InternalError}}
+	<div>内部错误</div>
+{{else}}
+	<div>
+		<h2>{{.ClassName}}</h2>
+	</div>
+	{{range .ArticleShortViews}}
+	<div>
+		<blockquote>
+		<h4><a href="/article/view/{{.Id}}">{{.Title}}</a></h4>
+		<div>
+			<u>{{.SortName}}</u>
+			<u>{{.ClassName}}</u>
+			<u>{{.UserName}}</u>
+			<u>更新:{{date .LastupdateTime "Y-m-d H:i:s"}}</u>
+			
+		</div>
+		</blockquote>
+	</div>
+	{{end}}
+
+	{{if .TotalPages}}
+	<div>
+	<ul class="pagination" id="pagelist">
+	</ul>
+	</div>
+
+	<script type="text/javascript">
+
+	function InitPageList() {
+		currentPage = {{.CurrentPageIndex}}
+		totalPages = {{.TotalPages}}
+
+		html = ""
+		for (i = 0; i < totalPages; ++i) {
+			if (i == currentPage) {
+				html += "<li  class=\"active\"><a href=\"#\">"+(i+1)+"</a></li>"
+			} else {
+				html += "<li><a href=\"/article/listbyclass/{{.ClassId}}/"+i+"\">"+(i+1)+"</a></li>"
+			}
+		}
+		$("#pagelist").html(html)
+	}
+
+	InitPageList()
+
+	</script>
+
+	{{end}}
+{{end}}

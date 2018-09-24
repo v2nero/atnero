@@ -19,7 +19,7 @@ func (this *ArticleListMineController) Get() {
 
 	this.InitLayout()
 	this.TplName = "article/listmine.html"
-	this.Data["Title"] = "博客列表 @Nero"
+	this.Data["PageTitle"] = "博客列表 @Nero"
 
 	_, userId, err := blogSess.GetUserBaseInfo(&this.Controller)
 	if err != nil {

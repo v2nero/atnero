@@ -11,7 +11,7 @@ type RegistController struct {
 func (this *RegistController) Get() {
 	this.InitLayout()
 	this.TplName = "login/regist.html"
-	this.Data["Title"] = "注册"
+	this.Data["PageTitle"] = "注册"
 	if blogSess.Logined(&this.Controller) {
 		this.Data["AlreadyLogin"] = true
 		return

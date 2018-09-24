@@ -1,2 +1,20 @@
 # atnero
-a simple blog system program in go
+个人博客系统
+为熟悉Go语法等练手之用
+
+# 主要组件
+1. Beego
+2. MySQL
+3. hprose RPC
+4. CKEditor4
+
+# 安全性问题
+1. 注册：需要邀请码
+2. 登陆：如果密码验证失败，则需要等待一定时间才能再次登陆，时间在配置文件中设置
+
+# 后台管理工具
+1. 停止网站服务
+2. 激活配置管理，生成配置管理验证码, 由/manager/verify进入
+3. 生成注册激活码
+
+

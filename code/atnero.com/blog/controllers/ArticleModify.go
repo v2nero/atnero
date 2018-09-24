@@ -48,7 +48,7 @@ func (this *ArticleModifyController) Get() {
 
 	this.InitLayout()
 	this.TplName = "article/modify.html"
-	this.Data["Title"] = "博客创建 @Nero"
+	this.Data["PageTitle"] = "博客创建 @Nero"
 	this.Data["ArticleSorts"] = models.ArticleManagerInst().GetSorts()
 	this.Data["ArticleClasses"] = models.ArticleManagerInst().GetClasses()
 	this.Data["ArticleDataView"] = articleData

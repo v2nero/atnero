@@ -31,7 +31,7 @@ type verifyInfo struct {
 func (this *ManagerVerifyController) Post() {
 	this.InitLayout()
 	this.TplName = "manager/verify.html"
-	this.Data["Title"] = "[后台管理]验证"
+	this.Data["PageTitle"] = "[后台管理]验证"
 	if blogSess.BgManagerEnabled(&this.Controller) {
 		this.Data["AlreadyVerified"] = true
 		return

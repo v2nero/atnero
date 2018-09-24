@@ -13,7 +13,7 @@ type ArticleListByClassController struct {
 func (this *ArticleListByClassController) Get() {
 	this.InitLayout()
 	this.TplName = "article/listbyclass.html"
-	this.Data["Title"] = "博客列表 @Nero"
+	this.Data["PageTitle"] = "博客列表 @Nero"
 
 	if !blogSess.UserHasRight(&this.Controller, "view_others_published_article") {
 		this.Data["OutOfRight"] = true

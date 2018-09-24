@@ -13,7 +13,7 @@ type ArticleViewController struct {
 func (this *ArticleViewController) Get() {
 	this.InitLayout()
 	this.TplName = "article/view.html"
-	this.Data["Title"] = "读博文 @Nero"
+	this.Data["PageTitle"] = "读博文 @Nero"
 
 	strArticleId := this.Ctx.Input.Param(":id")
 	articleId, err := strconv.ParseInt(strArticleId, 10, 64)

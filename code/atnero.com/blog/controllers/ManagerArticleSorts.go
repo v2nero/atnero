@@ -22,7 +22,7 @@ func (this *ManagerArticleSortsController) Get() {
 	}
 	this.InitLayout()
 	this.TplName = "manager/articlesorts.html"
-	this.Data["Title"] = "[后台管理]文章类型 @Nero"
+	this.Data["PageTitle"] = "[后台管理]文章类型 @Nero"
 
 	mng := models.ArticleManagerInst()
 	this.Data["Items"] = mng.GetSorts()

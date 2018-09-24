@@ -19,7 +19,7 @@ func (this *ManagerArticleClassesController) Get() {
 	}
 	this.InitLayout()
 	this.TplName = "manager/articlesorts.html"
-	this.Data["Title"] = "[后台管理]文章归类 @Nero"
+	this.Data["PageTitle"] = "[后台管理]文章归类 @Nero"
 
 	mng := models.ArticleManagerInst()
 	this.Data["Items"] = mng.GetClasses()

@@ -25,7 +25,7 @@ func (this *ManagerUserRightItemsController) Get() {
 	}
 	this.InitLayout()
 	this.TplName = "manager/userrightitems.html"
-	this.Data["Title"] = "[后台管理]用户权限 @Nero"
+	this.Data["PageTitle"] = "[后台管理]用户权限 @Nero"
 
 	//权限项
 	items := []userRightItemExpose{}

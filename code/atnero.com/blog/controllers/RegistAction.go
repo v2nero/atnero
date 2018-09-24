@@ -112,7 +112,7 @@ func checkInvitationCode(code string) bool {
 func (this *RegistActionController) Post() {
 	this.InitLayout()
 	this.TplName = "login/regist_action.html"
-	this.Data["Title"] = "注册"
+	this.Data["PageTitle"] = "注册"
 
 	userRightMng := models.UserRightsMngInst()
 	if !userRightMng.HasRightSet("base_user_rightset") {
