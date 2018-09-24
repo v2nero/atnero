@@ -15,6 +15,7 @@
                         <li><a href="/article/create">写博客</a></li>
                         <li><a href="/article/listmine">博文列表</a></li>
                         {{end}}
+                        {{if .BgManagerEnabled}}
                         <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                         管理
@@ -28,6 +29,7 @@
                                         <li><a href="/manager/articleclasses">文章归类</a></li>
                                 </ul>
                         </li>
+                        {{end}}
                         {{if .CommonUserInfo}}
                                 <li><a href="#">{{.CommonUserInfo.name}}</a></li>
                                 <li><a href="/logout">登出</a></li>

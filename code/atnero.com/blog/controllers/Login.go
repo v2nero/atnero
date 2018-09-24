@@ -42,7 +42,11 @@ func (this *LoginController) Post() {
 		return
 	}
 	//用户名不正常
-	if len(loginInfo.Name) < 4 || len(loginInfo.Name) > 24 {
+	if !checkUserName(loginInfo.Name) {
+		this.Data["InputDataError"] = true
+		return
+	}
+	if !checkPwd(loginInfo.Pwd) {
 		this.Data["InputDataError"] = true
 		return
 	}
@@ -53,6 +57,7 @@ func (this *LoginController) Post() {
 		this.Data["RedirectionURL"] = "/"
 		return
 	} else {
-		this.Data["InputDataError"] = true
+		this.Data["LoginFail"] = true
+		this.Data["LoginFailTime"] = blogSess.GetLoginFailInterval()
 	}
 }

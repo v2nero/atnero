@@ -40,6 +40,44 @@ CREATE TABLE user_right_item (
 );
 
 -- INSERT INTO user_right_item(name, dsc, enable) VALUES ('modify_db', 'right to modify database, limited to superuser', true);
+INSERT INTO user_right_item(name, dsc, enable) VALUES (
+        'view_others_published_article',
+        '查看别人的文章',
+        true);
+INSERT INTO user_right_item(name, dsc, enable) VALUES (
+        'view_others_hidden_article',
+        '查看别人隐藏的文章;只有管理员有此权限',
+        true);
+INSERT INTO user_right_item(name, dsc, enable) VALUES (
+        'view_my_published_article',
+        '查看自己的文章',
+        true);
+INSERT INTO user_right_item(name, dsc, enable) VALUES (
+        'view_my_hidden_article',
+        '查看自己隐藏的文章',
+        true);
+INSERT INTO user_right_item(name, dsc, enable) VALUES (
+        'edit_my_article',
+        '修改自己的文章',
+        true);
+INSERT INTO user_right_item(name, dsc, enable) VALUES (
+        'edit_others_article',
+        '修改别人的文章;只有管理员有此权限',
+        true);
+INSERT INTO user_right_item(name, dsc, enable) VALUES (
+        'delete_my_article',
+        '删除自己的文章',
+        true);
+INSERT INTO user_right_item(name, dsc, enable) VALUES (
+        'delete_others_article',
+        '删除别人的文章;只有管理员有此权限',
+        false);
+INSERT INTO user_right_item(name, dsc, enable) VALUES (
+        'create_article',
+        '创建文章',
+        true);
+
+
 
 -- 权限集
 -- 如administrator
@@ -54,6 +92,12 @@ CREATE TABLE user_right_set (
 );
 
 -- INSERT INTO user_right_set(name, dsc) VALUES ('superuser', 'right to modify database, limited to superuser');
+INSERT INTO user_right_set(name, dsc) VALUES (
+        'tourist_rightset',
+        '游客权限组;只能查看别人发布的文章');
+INSERT INTO user_right_set(name, dsc) VALUES (
+        'base_user_rightset',
+        '普通用户,查看发布的文章，查看自己隐藏的文章，编辑自己的文章，删除自己的文章');
 
 -- 权限集到权限选项一对多映射
 CREATE TABLE user_right_set2item_map (
@@ -71,6 +115,28 @@ CREATE TABLE user_right_set2item_map (
         SELECT user_right_set.id, user_right_item.id FROM user_right_set, user_right_item
                 WHERE user_right_set.name = 'superuser' AND user_right_item.name = 'modify_db' ;
 */
+INSERT INTO user_right_set2item_map(set_id, item_id)
+        SELECT user_right_set.id, user_right_item.id FROM user_right_set, user_right_item
+                WHERE user_right_set.name = 'tourist_rightset' AND user_right_item.name = 'view_others_published_article';
+INSERT INTO user_right_set2item_map(set_id, item_id)
+        SELECT user_right_set.id, user_right_item.id FROM user_right_set, user_right_item
+                WHERE user_right_set.name = 'base_user_rightset' AND user_right_item.name = 'view_others_published_article';
+INSERT INTO user_right_set2item_map(set_id, item_id)
+        SELECT user_right_set.id, user_right_item.id FROM user_right_set, user_right_item
+                WHERE user_right_set.name = 'base_user_rightset' AND user_right_item.name = 'view_my_published_article';
+INSERT INTO user_right_set2item_map(set_id, item_id)
+        SELECT user_right_set.id, user_right_item.id FROM user_right_set, user_right_item
+                WHERE user_right_set.name = 'base_user_rightset' AND user_right_item.name = 'view_my_hidden_article';
+INSERT INTO user_right_set2item_map(set_id, item_id)
+        SELECT user_right_set.id, user_right_item.id FROM user_right_set, user_right_item
+                WHERE user_right_set.name = 'base_user_rightset' AND user_right_item.name = 'edit_my_article';
+INSERT INTO user_right_set2item_map(set_id, item_id)
+        SELECT user_right_set.id, user_right_item.id FROM user_right_set, user_right_item
+                WHERE user_right_set.name = 'base_user_rightset' AND user_right_item.name = 'delete_my_article';
+INSERT INTO user_right_set2item_map(set_id, item_id)
+        SELECT user_right_set.id, user_right_item.id FROM user_right_set, user_right_item
+                WHERE user_right_set.name = 'base_user_rightset' AND user_right_item.name = 'create_article';
+
 
 CREATE TABLE default_right_sets(
         id bigint NOT NULL AUTO_INCREMENT UNIQUE
@@ -92,6 +158,8 @@ CREATE TABLE users(
         ,email VARCHAR(40) NOT NULL
         ,rightset bigint NOT NULL
         ,reg_time DATETIME NOT null DEFAULT now()
+        ,last_time DATETIME NOT null DEFAULT now()
+        ,fail_time DATETIME NOT null DEFAULT now()
         ,CONSTRAINT pk_users PRIMARY KEY (
                 id
         )
@@ -183,5 +251,18 @@ CREATE TABLE article_comments (
         )
         ,CONSTRAINT fk_article_comments_articleid FOREIGN KEY (article_id) references articles(id)
 );
+
+
+CREATE TABLE invitation_code(
+        id bigint NOT NULL AUTO_INCREMENT UNIQUE
+        ,code VARCHAR(40) NOT NULL UNIQUE
+        ,used boolean NOT NULL DEFAULT false
+        ,create_time DATETIME NOT null DEFAULT now()
+        ,expire_time  DATETIME NOT null
+        ,CONSTRAINT pk_invitation_code PRIMARY KEY (
+                id
+        )
+);
+
 
 COMMIT;

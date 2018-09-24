@@ -7,10 +7,17 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"time"
 )
 
 func Logined(c *beego.Controller) bool {
 	return c.GetSession("user") != nil
+}
+
+var loginFailInterval float64
+
+func GetLoginFailInterval() float64 {
+	return loginFailInterval
 }
 
 // Login 登陆
@@ -26,13 +33,34 @@ func Login(c *beego.Controller, user string, pwd string) bool {
 	if err != nil {
 		return false
 	}
+	//检查最后一次验证失败时间
+	tNow := time.Now()
+	if tNow.Sub(dbUser.FailTime).Seconds() < loginFailInterval {
+		return false
+	}
 	strMd5 := fmt.Sprintf("%x", md5.Sum([]byte(pwd)))
 	if dbUser.Password != strMd5 {
+		//更新最后一次密码验证失败时间
+		dbUser.FailTime = tNow
+		num, err := o.Update(&dbUser)
+		if err != nil {
+			beego.Error("update user record fail:", err)
+		} else if num == 0 {
+			beego.Error("update user record fail: no rows impact")
+		}
 		return false
 	}
 	rightSetName, err := models.UserRightsMngInst().GetRightSetNameById(dbUser.Rightset)
 	if err != nil {
 		return false
+	}
+	//更新最后一次登陆时间
+	dbUser.LastTime = tNow
+	num, err := o.Update(&dbUser)
+	if err != nil {
+		beego.Error("update user record fail:", err)
+	} else if num == 0 {
+		beego.Error("update user record fail: no rows impact")
 	}
 	sessUserInfo := make(map[string]interface{})
 	sessUserInfo["name"] = dbUser.Name
@@ -93,4 +121,9 @@ func GetUserBaseInfo(c *beego.Controller) (name string, id int64, errRet error) 
 
 func init() {
 	models.AddDependencyRightSet("tourist_rightset", "user", "网站游客基本权限集")
+	var err error
+	loginFailInterval, err = beego.AppConfig.Float("loginfail_interval")
+	if err != nil {
+		loginFailInterval = 10
+	}
 }

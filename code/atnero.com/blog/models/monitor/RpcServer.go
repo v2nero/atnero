@@ -15,9 +15,15 @@ func (*MonitorServices) EnableBgManager() string {
 	logs.Warning("[Monitor] Eanble background manager")
 	return db.DbMgrInst().EnableBgManager()
 }
+
 func (*MonitorServices) StopService() {
 	logs.Warning("[Monitor] Stop service")
 	beego.BeeApp.Server.Close()
+}
+
+func (*MonitorServices) GenInvitationCode(expireHours int) string {
+	logs.Warning("[Monitor] Generate invitation code")
+	return db.DbMgrInst().GenInvitationCode(expireHours)
 }
 
 var tcpServer *rpc.TCPServer

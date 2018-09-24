@@ -7,22 +7,25 @@ import (
 )
 
 type MonitorServices struct {
-	EnableBgManager func() string
-	StopService     func()
+	EnableBgManager   func() string
+	StopService       func()
+	GenInvitationCode func(expireHours int) string
 }
 
 var monitorServices *MonitorServices
 
 type FlagArgs struct {
-	port string
-	cmd  string
+	port  string
+	cmd   string
+	hours int
 }
 
 var flagArgs FlagArgs
 
 func init() {
 	flag.StringVar(&flagArgs.port, "port", "8000", "tcp port")
-	flag.StringVar(&flagArgs.cmd, "cmd", "", "command")
+	flag.StringVar(&flagArgs.cmd, "cmd", "", "command: EnableBgManager/StopService/GenInvitationCode")
+	flag.IntVar(&flagArgs.hours, "hours", 72, "hours")
 }
 
 func main() {
@@ -49,6 +52,11 @@ func main() {
 			return
 		}
 		fmt.Println("Quit operation")
+		return
+	case "GenInvitationCode":
+		fmt.Printf("Generate invitation code, expire hours = %d\n", flagArgs.hours)
+		code := monitorServices.GenInvitationCode(flagArgs.hours)
+		fmt.Println(code)
 		return
 	default:
 		flag.Usage()

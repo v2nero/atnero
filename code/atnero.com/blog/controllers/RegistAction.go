@@ -16,9 +16,34 @@ type RegistActionController struct {
 }
 
 type registInfo struct {
-	Name  string `form:"user"`
-	Pwd   string `form:"password"`
-	Email string `form:"email"`
+	Name           string `form:"user"`
+	Pwd            string `form:"password"`
+	Email          string `form:"email"`
+	InvitationCode string `form:"invitationcode"`
+}
+
+func checkUserName(name string) bool {
+	if len := len(name); len < 4 || len > 24 {
+		return false
+	}
+	matched := true
+	for _, r := range name {
+		if r >= '0' && r <= '9' {
+			continue
+		}
+		if r >= 'a' && r <= 'z' {
+			continue
+		}
+		if r >= 'A' && r <= 'Z' {
+			continue
+		}
+		if r == '_' {
+			continue
+		}
+		matched = false
+		break
+	}
+	return matched
 }
 
 func checkPwd(pwd string) bool {
@@ -45,6 +70,43 @@ func checkPwd(pwd string) bool {
 	}
 
 	return bDigit && bLowChar && bUpChar && bSpecial
+}
+
+func checkInvitationCode(code string) bool {
+	if len(code) == 0 {
+		return false
+	}
+	bMatched := true
+	for _, r := range code {
+		if r >= '0' && r <= '9' {
+			continue
+		}
+		if r >= 'a' && r <= 'f' {
+			continue
+		}
+		if r >= 'A' && r <= 'F' {
+			continue
+		}
+		bMatched = false
+		break
+	}
+	if !bMatched {
+		return false
+	}
+	o := orm.NewOrm()
+	result, err := o.Raw("UPDATE invitation_code SET used = true WHERE code=? AND used=false AND expire_time > now()", code).Exec()
+	if err != nil {
+		return false
+	}
+	num, err := result.RowsAffected()
+	if err != nil {
+		return false
+	}
+	if num != 1 {
+		return false
+	}
+	beego.Info("[InvitationCode] ", code, " is costed")
+	return true
 }
 
 func (this *RegistActionController) Post() {
@@ -81,8 +143,8 @@ func (this *RegistActionController) Post() {
 	}
 
 	//用户名不正常
-	if len(registInfo.Name) < 4 || len(registInfo.Name) > 24 {
-		this.Data["FailReason"] = "用户名长度不在允许范围内"
+	if !checkUserName(registInfo.Name) {
+		this.Data["FailReason"] = "用户名不符合规则"
 		return
 	}
 
@@ -96,6 +158,12 @@ func (this *RegistActionController) Post() {
 	v.Email(registInfo.Email, "email")
 	if v.HasErrors() {
 		this.Data["FailReason"] = "无效的邮箱地址"
+		return
+	}
+
+	//最后一步验证参数，否则会导致邀请码太多条件下使用无效
+	if !checkInvitationCode(registInfo.InvitationCode) {
+		this.Data["FailReason"] = "邀请码验证失败"
 		return
 	}
 

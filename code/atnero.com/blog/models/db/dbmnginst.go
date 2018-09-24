@@ -1,6 +1,7 @@
 package db
 
 import (
+	"crypto/md5"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
@@ -54,6 +55,31 @@ func (mng *DatabaseManager) EnableBgManager() string {
 	}
 	mng.mutex.Unlock()
 	return retPwd
+}
+
+func (mng *DatabaseManager) GenInvitationCode(expireHours int) string {
+	var retCode string
+	for {
+		r := rand.New(rand.NewSource(time.Now().UnixNano()))
+		num := r.Int31n(10000000)
+		numString := fmt.Sprintf("%07d", num)
+		retCode = fmt.Sprintf("%x", md5.Sum([]byte(numString)))
+		tNow := time.Now()
+		tExpire := tNow.Add(time.Hour * time.Duration(expireHours))
+		invitationCode := InvitationCode{
+			Code:       retCode,
+			Used:       false,
+			CreateTime: tNow,
+			ExpireTime: tExpire,
+		}
+		o := orm.NewOrm()
+		_, err := o.Insert(&invitationCode)
+		if err != nil {
+			continue
+		}
+		break
+	}
+	return retCode
 }
 
 // VerifyBgManagerPwd 验证密码
@@ -162,6 +188,7 @@ func (mng *DatabaseManager) init() {
 	orm.RegisterModel(new(ArticleAttachedLabels))
 	orm.RegisterModel(new(ArticleComments))
 	orm.RegisterModel(new(DefaultRightSets))
+	orm.RegisterModel(new(InvitationCode))
 
 	mng.initDbVersion()
 	//mng.initDbMngEnable()

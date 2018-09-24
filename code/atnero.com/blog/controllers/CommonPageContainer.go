@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"atnero.com/blog/models"
 	blogSess "atnero.com/blog/models/session"
 	"github.com/astaxie/beego"
 )
@@ -24,4 +25,8 @@ func (this *CommonPageContainerController) InitLayout() {
 		}
 	}
 
+	if models.TestManagerInst().BgManagerTestEnabled(&this.Controller) ||
+		blogSess.BgManagerEnabled(&this.Controller) {
+		this.Data["BgManagerEnabled"] = true
+	}
 }
