@@ -28,7 +28,7 @@ func (this *localTestManager) init() {
 func (this *localTestManager) isLocalIp(c *beego.Controller) bool {
 	request := c.Ctx.Request
 	add := request.RemoteAddr
-	matched, err := regexp.MatchString(`::\d{1,3}`, add)
+	matched, err := regexp.MatchString(`^::\d{1,3}`, add)
 	if err != nil {
 		return false
 	}

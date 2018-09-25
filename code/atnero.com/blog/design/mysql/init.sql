@@ -1,9 +1,9 @@
-drop database blog;
+-- drop database blog;
 
 BEGIN;
 
 -- 创建blog数据库
-CREATE DATABASE blog;
+CREATE DATABASE blog DEFAULT CHARSET utf8 COLLATE utf8_bin;
 
 -- 跳到blog数据库
 USE blog;
