@@ -24,13 +24,23 @@ func main() {
 	beego.Info("[CKEDITOR4] path=", ckeditor4Path)
 	beego.SetStaticPath("/thirdparty/ckeditor4", ckeditor4Path)
 
+	ck_imgupload_viewdir := beego.AppConfig.String("ckeditor::image_upload_view_dir")
+	ck_imgupload_dir := beego.AppConfig.String("ckeditor::image_upload_dir")
+	if len(ck_imgupload_viewdir) == 0 {
+		beego.Error("[CKEDITOR4] missing ckeditor::image_upload_view_dir")
+		return
+	}
+	if len(ck_imgupload_dir) == 0 {
+		beego.Error("[CKEDITOR4] missing ckeditor::image_upload_dir")
+		return
+	}
+
+	beego.SetStaticPath(ck_imgupload_viewdir, ck_imgupload_dir)
+
 	models.CheckRightSetDependencies()
 	monitor.InitMonitorRpcService()
 	beego.AddTemplateExt("html")
 	beego.AddTemplateExt("xml")
 
 	beego.Run()
-
-	//TODO:
-	//1. 图片上传
 }

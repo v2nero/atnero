@@ -31,4 +31,5 @@ func init() {
 	beego.Router("/article/listbyclass/:classid/?:index", &controllers.ArticleListByClassController{})
 	beego.Router("/article/modify/:id", &controllers.ArticleModifyController{})
 	beego.Router("/api_article", &controllers.ApiArticleController{})
+	beego.Router("/upload/imageforckeditor", &controllers.ImageUploadForCKEditorController{})
 }
