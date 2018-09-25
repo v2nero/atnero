@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	ReleaseVersion = "0.1.0"
+	ReleaseVersion = "0.1.1"
 )
 
 func main() {
