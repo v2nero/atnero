@@ -646,7 +646,7 @@ func (this *DbArticleManager) GetArticlesShortViewOfClass(classId int64,
 	var errRet error
 	for {
 		o := orm.NewOrm()
-		_, err := o.Raw("select a.id, a.user_id, users.name as 'user_name', a.title, sort.name as 'sort_name', class.name as 'class_name', a.published, a.view_count, a.lastupdate_time from articles a INNER JOIN users ON a.user_id = users.id INNER JOIN article_sorts sort ON sort.id = a.sort_id INNER JOIN article_classes class ON class.id = a.class_id where a.class_id=? AND a.published=true limit ?,?",
+		_, err := o.Raw("select a.id, a.user_id, users.name as 'user_name', a.title, sort.name as 'sort_name', class.name as 'class_name', a.published, a.view_count, a.lastupdate_time from articles a INNER JOIN users ON a.user_id = users.id INNER JOIN article_sorts sort ON sort.id = a.sort_id INNER JOIN article_classes class ON class.id = a.class_id where a.class_id=? AND a.published=true  order by a.id desc limit ?,?",
 			classId, index*limit, limit).QueryRows(&views)
 		if err != nil {
 			errRet = err
@@ -692,13 +692,13 @@ func (this *DbArticleManager) GetArticlesShortViewOfAll(publishedOnly bool,
 	for {
 		o := orm.NewOrm()
 		if publishedOnly {
-			_, err := o.Raw("select a.id, a.user_id, users.name as 'user_name', a.title, sort.name as 'sort_name', class.name as 'class_name', a.published, a.view_count, a.lastupdate_time from articles a INNER JOIN users ON a.user_id = users.id INNER JOIN article_sorts sort ON sort.id = a.sort_id INNER JOIN article_classes class ON class.id = a.class_id where published=? limit ?,?",
+			_, err := o.Raw("select a.id, a.user_id, users.name as 'user_name', a.title, sort.name as 'sort_name', class.name as 'class_name', a.published, a.view_count, a.lastupdate_time from articles a INNER JOIN users ON a.user_id = users.id INNER JOIN article_sorts sort ON sort.id = a.sort_id INNER JOIN article_classes class ON class.id = a.class_id where published=? order by a.id desc limit ?,?",
 				true, index*limit, limit).QueryRows(&views)
 			if err != nil {
 				errRet = err
 			}
 		} else {
-			_, err := o.Raw("select a.id, a.user_id, users.name as 'user_name', a.title, sort.name as 'sort_name', class.name as 'class_name', a.published, a.view_count, a.lastupdate_time from articles a INNER JOIN users ON a.user_id = users.id INNER JOIN article_sorts sort ON sort.id = a.sort_id INNER JOIN article_classes class ON class.id = a.class_id limit ?,?",
+			_, err := o.Raw("select a.id, a.user_id, users.name as 'user_name', a.title, sort.name as 'sort_name', class.name as 'class_name', a.published, a.view_count, a.lastupdate_time from articles a INNER JOIN users ON a.user_id = users.id INNER JOIN article_sorts sort ON sort.id = a.sort_id INNER JOIN article_classes class ON class.id = a.class_id  order by a.id desc limit ?,?",
 				index*limit, limit).QueryRows(&views)
 			if err != nil {
 				errRet = err
